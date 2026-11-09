@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generative AI in Scientific Research: survey results</title>
+<meta name="description" content="Results of the University of Sydney Faculty of Science survey on generative AI in research, November 2026.">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+  window.dash = (() => {
+    const raw = {}, calcs = {}, cache = {}, draws = {};
+    const api = {
+      colors: ["#b07a1e", "#3d3a6b", "#a24a26", "#5e4237"],
+      calc(id, spec) { calcs[id] = spec; },
+      data(id) {
+        if (cache[id]) return cache[id];
+        if (raw[id]) return raw[id];
+        const c = calcs[id];
+        if (!c) return { status: 'loading' };
+        const ins = c.inputs.map((i) => api.data(i)), bad = ins.find((d) => d.status !== 'ok');
+        if (bad) return { status: bad.status };
+        try { return (cache[id] = { status: 'ok', data: c.fn(...ins.map((d) => d.data)) }); }
+        catch (e) { console.error(id, e); return (cache[id] = { status: 'error' }); }
+      },
+      draw(name, fn) {
+        if (fn) { draws[name] = fn; return; }
+        document.querySelectorAll(`[data-draw="${name}"]`).forEach((el) => draws[name](el));
+      },
+      async load(files) {
+        await Promise.all(Object.entries(files).map(async ([id, url]) => {
+          try { raw[id] = { status: 'ok', data: await d3.csv(url, d3.autoType) }; }
+          catch (e) { console.error(url, e); raw[id] = { status: 'error' }; }
+        }));
+        Object.keys(draws).forEach((n) => api.draw(n));
+      },
+    };
+    return api;
+  })();
+  window.SV = { pick: { p: null, u: null }, meta: {} };
+</script>
+
+<style>
+  :root {
+    color-scheme: light;
+    --font-anthropic-serif: "Hoefler Text", "Iowan Old Style", Georgia, serif;
+    --font-anthropic-sans: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
+    --color-fg: #22231c; --color-fg-muted: #66675a; --color-panel: #fff; --color-border-line: #e6dccb; --color-bad: #a24a26;
+    --cds-chart-muted: #d9cfbf; --cds-chart-grid: #eee6d8; --cds-chart-axis: #b8ad99; --cds-border: #e6dccb;
+    --cds-surface-popover: #fff; --cds-shadow-popover: 0 6px 20px rgba(34, 35, 28, .14); --cds-text-secondary: #66675a;
+    --cds-radius: 14px; --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-lg: 22px;
+    --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 18px; --cds-gap-lg: 26px; --cds-gap-xl: 44px;
+    --cds-font-size-caption: 14px; --cds-font-size-heading: 20px; --cds-font-size-title: 40px; --cds-font-weight-medium: 600;
+    --cds-dur-slow: .3s;
+  }
+  html { background: #fff; } body { margin: 0; padding: 40px 20px 64px; color: var(--color-fg); font-family: var(--font-anthropic-sans); font-size: 16px; }
+  .sv { position: relative; }
+  .sv-head { position: relative; padding-top: 12px; padding-right: min(34vw, 300px); min-height: 200px; }
+  .sv-rings { position: absolute; top: -40px; right: -20px; width: min(42vw, 380px); height: auto; z-index: -1; }
+  .sv-kicker { margin: 0; font-family: var(--font-anthropic-serif); font-style: italic; color: #b07a1e; font-size: 19px; }
+  .sv-sub { margin: 0; color: #3d3a6b; font-weight: 600; }
+  .sv-eyebrow { font-family: var(--font-anthropic-serif) !important; font-style: italic; text-transform: none !important; letter-spacing: 0 !important; color: #b07a1e !important; font-size: 18px !important; }
+  #perspectives .sv-h2 { color: #8a3324; } #use .sv-h2 { color: #8f6420; } #career-stage .sv-h2, #respondents .sv-h2 { color: #3d3a6b; }
+  .sv-h2 { font-family: var(--font-anthropic-serif); font-weight: 400 !important; font-size: 30px !important; }
+  .sv-card h3 { font-family: var(--font-anthropic-serif); font-weight: 400 !important; font-size: 22px !important; }
+  .sv-card, .sv-tile { border: 1.5px dotted #d4bd8e !important; }
+  #perspectives .sv-card { border-color: #c48f80 !important; } #use .sv-card { border-color: #c9a86c !important; } #career-stage .sv-card { border-color: #a19dc4 !important; }
+  .sv-tile .v { color: #8a3324; } .sv-tile:nth-child(2) .v { color: #8f6420; } .sv-tile:nth-child(3) .v { color: #3d3a6b; } .sv-tile:nth-child(4) .v { color: #a24a26; }
+  .sv-q { border-left-color: #d4bd8e !important; }
+  .dash-skeleton { min-height: 160px; background: linear-gradient(90deg, #f6f1e8, #fbf8f2, #f6f1e8); border-radius: 8px; }
+  .sv-foot { color: var(--color-fg-muted); font-size: 14px; margin: 0; }
+  @media (max-width: 640px) { .sv-head { padding-right: 0; } .sv-rings { opacity: .45; } :root { --cds-font-size-title: 32px; } }
+</style>
+</head>
+<body>
+<style>
+  .sv { max-width: 1120px; margin-inline: auto; font-family: var(--font-anthropic-sans); display: grid; gap: var(--cds-gap-xl); }
+  .sv-head { display: grid; gap: var(--cds-gap-sm); }
+  .sv-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+  .sv-lede { margin: 0; color: var(--color-fg-muted); max-width: 70ch; }
+  .sv .sv-lede b, .sv .sv-note b { color: var(--color-fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .sv-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--cds-gap-md); }
+  .sv-tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-xs); align-content: start; }
+  .sv-tile .k { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .sv-tile .v { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .sv-tile .s { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .sv-section { display: grid; gap: var(--cds-gap-md); }
+  .sv-eyebrow { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .06em; text-transform: uppercase; margin: 0; }
+  .sv-h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .sv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); }
+  .sv-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-sm); align-content: start; min-width: 0; }
+  .sv-card.wide { grid-column: 1 / -1; }
+  .sv-card h3 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .sv-note { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .sv-chart { position: relative; min-height: 120px; }
+  .sv-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: var(--cds-gap-lg); align-items: start; }
+  .sv-quotes { display: grid; gap: var(--cds-gap-sm); max-height: 34rem; overflow: auto; padding-right: var(--cds-pad-xs); min-height: 120px; }
+  .sv-q { border-left: 2px solid var(--color-border-line); padding: var(--cds-pad-xs) var(--cds-pad-sm); display: grid; gap: var(--cds-gap-xs); }
+  .sv-q p + p { padding-top: var(--cds-pad-xs); border-top: 1px dashed var(--color-border-line); }
+  .sv-q p { margin: 0; white-space: pre-line; line-height: 1.45; }
+  .sv-q .m { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .sv-qhead { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; }
+  .sv-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .sv-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sv-legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .sv-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+  .sv-tip .t { color: var(--cds-text-secondary); }
+  .sv-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 120px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .sv-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+  .sv svg text { fill: var(--color-fg); font-family: var(--font-anthropic-sans); }
+  .sv svg text.mut { fill: var(--color-fg-muted); }
+  .sv svg .bar.click { cursor: pointer; }
+  .sv [data-dash-source-state=empty] { color: transparent; }
+  .sv [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+  .sv-tablewrap { overflow-x: auto; }
+  .sv-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .sv-table th { text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: bottom; }
+  .sv-table td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .sv-table td.num { min-width: 5.5rem; }
+  .sv-cellbar { display: inline-block; height: 8px; border-radius: 2px; margin-left: 6px; vertical-align: middle; background: var(--sv-c0); opacity: .7; }
+  .sv-method { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); max-width: 80ch; margin: 0; line-height: 1.5; }
+</style>
+
+<div class="sv">
+  <header class="sv-head" id="top">
+    <svg class="sv-rings" viewBox="0 0 420 420" aria-hidden="true"><polyline points="313.8,120.0 313.6,120.7 313.5,121.4 313.3,122.1 313.1,122.8 312.9,123.4 312.7,124.1 312.4,124.8 312.2,125.4 311.9,126.1 311.6,126.7 311.3,127.4 311.0,128.0 310.6,128.6 310.2,129.2 309.8,129.8 309.3,130.3 308.8,130.8 308.2,131.3 307.6,131.8 307.0,132.2 306.4,132.5 305.7,132.9 305.0,133.1 304.3,133.4 303.6,133.6 302.9,133.7 302.2,133.9 301.5,134.0 300.7,134.1 300.0,134.1 299.3,134.1 298.5,134.1 297.8,134.0 297.0,133.9 296.3,133.8 295.6,133.6 294.9,133.3 294.2,133.0 293.6,132.6 292.9,132.2 292.4,131.8 291.8,131.3 291.3,130.7 290.9,130.2 290.4,129.6 290.1,129.0 289.7,128.3 289.4,127.7 289.1,127.1 288.8,126.5 288.5,125.8 288.3,125.2 288.0,124.6 287.7,124.0 287.4,123.4 287.2,122.7 286.9,122.1 286.7,121.4 286.5,120.7 286.3,120.0 286.2,119.3 286.1,118.5 286.1,117.8 286.1,117.0 286.2,116.3 286.3,115.6 286.5,114.8 286.8,114.1 287.1,113.4 287.5,112.8 287.9,112.2 288.4,111.6 288.9,111.0 289.4,110.5 290.0,110.0 290.5,109.5 291.1,109.1 291.7,108.6 292.4,108.2 293.0,107.9 293.7,107.5 294.3,107.2 295.0,107.0 295.7,106.7 296.4,106.5 297.1,106.4 297.8,106.3 298.6,106.2 299.3,106.2 300.0,106.3 300.7,106.4 301.4,106.5 302.1,106.7 302.8,106.9 303.5,107.1 304.1,107.4 304.8,107.6 305.4,107.9 306.0,108.2 306.6,108.5 307.3,108.8 307.9,109.1 308.5,109.5 309.1,109.9 309.7,110.3 310.3,110.7 310.9,111.2 311.4,111.7 311.9,112.3 312.4,112.9 312.8,113.5 313.1,114.2 313.4,114.8 313.6,115.6 313.8,116.3 313.9,117.0 313.9,117.8 313.9,118.5 313.9,119.3 313.8,120.0" fill="none" stroke="#e8d29e" stroke-width="1.3" stroke-linecap="round"/><polyline points="335.9,120.0 335.5,121.9 335.1,123.7 334.6,125.5 334.1,127.3 333.6,129.0 333.0,130.7 332.4,132.4 331.8,134.2 331.1,135.9 330.4,137.5 329.6,139.2 328.7,140.9 327.8,142.5 326.8,144.1 325.6,145.6 324.4,147.1 323.0,148.4 321.6,149.7 320.0,150.8 318.4,151.9 316.7,152.8 315.0,153.6 313.2,154.3 311.4,155.0 309.5,155.5 307.6,155.9 305.7,156.2 303.8,156.5 301.9,156.6 300.0,156.7 298.1,156.7 296.2,156.6 294.2,156.4 292.3,156.1 290.4,155.7 288.6,155.1 286.8,154.5 285.0,153.7 283.3,152.7 281.7,151.6 280.2,150.4 278.8,149.1 277.5,147.8 276.3,146.3 275.2,144.8 274.2,143.2 273.3,141.6 272.4,140.1 271.6,138.5 270.8,136.9 270.0,135.3 269.3,133.7 268.5,132.1 267.8,130.5 267.1,128.8 266.4,127.2 265.7,125.4 265.0,123.7 264.5,121.9 264.0,120.0 263.6,118.1 263.4,116.2 263.3,114.2 263.4,112.2 263.6,110.2 264.0,108.3 264.6,106.4 265.3,104.6 266.2,102.8 267.3,101.1 268.4,99.5 269.7,98.0 271.0,96.5 272.4,95.2 273.9,93.9 275.4,92.7 277.0,91.6 278.6,90.5 280.2,89.5 281.9,88.6 283.6,87.7 285.3,86.9 287.0,86.2 288.8,85.7 290.7,85.2 292.5,84.8 294.4,84.5 296.3,84.4 298.1,84.3 300.0,84.4 301.9,84.6 303.7,85.0 305.5,85.4 307.3,85.9 309.0,86.4 310.7,87.0 312.4,87.7 314.1,88.4 315.7,89.1 317.4,89.9 319.0,90.7 320.6,91.6 322.3,92.5 323.9,93.5 325.4,94.6 327.0,95.7 328.4,97.0 329.8,98.3 331.2,99.8 332.3,101.3 333.4,103.0 334.3,104.7 335.0,106.6 335.6,108.4 336.0,110.3 336.3,112.3 336.4,114.2 336.3,116.2 336.1,118.1 335.9,120.0" fill="none" stroke="#e4ca97" stroke-width="1.3" stroke-linecap="round"/><polyline points="358.1,120.0 357.6,123.0 356.9,126.0 356.1,128.9 355.3,131.8 354.5,134.6 353.6,137.4 352.6,140.2 351.6,143.0 350.6,145.8 349.4,148.5 348.1,151.3 346.8,154.0 345.2,156.6 343.5,159.2 341.7,161.7 339.7,164.0 337.5,166.3 335.1,168.3 332.6,170.2 329.9,171.9 327.2,173.4 324.3,174.7 321.4,175.8 318.4,176.7 315.4,177.5 312.4,178.2 309.3,178.6 306.2,179.0 303.1,179.2 300.0,179.3 296.9,179.3 293.8,179.1 290.7,178.7 287.6,178.2 284.6,177.5 281.6,176.6 278.7,175.5 275.9,174.2 273.2,172.6 270.6,170.9 268.2,169.0 265.9,167.0 263.8,164.8 261.8,162.4 260.0,160.0 258.3,157.6 256.7,155.0 255.3,152.5 253.9,150.0 252.5,147.4 251.2,144.8 250.0,142.3 248.7,139.7 247.4,137.1 246.2,134.4 245.0,131.7 243.8,128.9 242.7,126.0 241.8,123.1 241.0,120.0 240.4,116.9 240.0,113.7 239.9,110.5 240.1,107.3 240.5,104.1 241.2,100.9 242.2,97.8 243.5,94.8 245.0,92.0 246.7,89.3 248.7,86.7 250.8,84.2 253.0,81.9 255.4,79.8 257.8,77.8 260.3,75.9 262.8,74.1 265.4,72.4 268.1,70.9 270.8,69.4 273.5,68.0 276.3,66.8 279.2,65.7 282.0,64.7 285.0,63.9 287.9,63.3 290.9,62.8 294.0,62.6 297.0,62.5 300.0,62.6 303.0,62.9 306.0,63.4 308.9,64.0 311.8,64.7 314.6,65.6 317.4,66.5 320.1,67.6 322.9,68.7 325.6,69.8 328.2,71.1 330.9,72.4 333.6,73.8 336.2,75.3 338.8,76.9 341.4,78.6 343.9,80.5 346.3,82.5 348.6,84.7 350.7,87.1 352.6,89.6 354.3,92.3 355.7,95.2 356.9,98.2 357.8,101.2 358.4,104.3 358.8,107.5 359.0,110.7 358.9,113.8 358.6,116.9 358.1,120.0" fill="none" stroke="#e0c391" stroke-width="1.3" stroke-linecap="round"/><polyline points="377.8,120.0 377.1,124.0 376.2,128.0 375.2,131.9 374.1,135.7 373.0,139.5 371.8,143.3 370.5,147.1 369.2,150.8 367.8,154.6 366.3,158.3 364.6,162.0 362.8,165.6 360.8,169.2 358.5,172.7 356.0,176.0 353.3,179.2 350.3,182.2 347.1,184.9 343.8,187.4 340.2,189.6 336.5,191.6 332.6,193.3 328.7,194.8 324.7,196.0 320.6,197.0 316.5,197.8 312.4,198.4 308.3,198.8 304.1,199.0 300.0,199.1 295.9,199.0 291.7,198.7 287.6,198.2 283.5,197.4 279.5,196.5 275.5,195.3 271.7,193.8 267.9,192.1 264.3,190.1 260.8,187.8 257.6,185.3 254.5,182.6 251.6,179.7 249.0,176.7 246.5,173.5 244.2,170.3 242.0,167.0 240.0,163.6 238.0,160.2 236.2,156.9 234.3,153.5 232.5,150.0 230.7,146.6 229.0,143.1 227.2,139.5 225.6,135.8 224.0,132.0 222.5,128.1 221.3,124.1 220.2,120.0 219.4,115.8 219.0,111.5 218.9,107.1 219.1,102.8 219.8,98.5 220.8,94.3 222.3,90.2 224.1,86.2 226.2,82.4 228.6,78.8 231.3,75.4 234.2,72.2 237.2,69.2 240.4,66.3 243.7,63.7 247.1,61.2 250.5,58.9 254.0,56.7 257.6,54.7 261.2,52.8 264.8,51.0 268.5,49.3 272.3,47.9 276.1,46.6 280.0,45.4 284.0,44.6 287.9,43.9 292.0,43.5 296.0,43.3 300.0,43.4 304.0,43.7 308.0,44.3 311.9,45.0 315.7,45.9 319.6,47.0 323.3,48.2 327.0,49.5 330.7,51.0 334.4,52.5 338.0,54.2 341.6,55.9 345.2,57.8 348.8,59.8 352.3,61.9 355.7,64.3 359.1,66.8 362.3,69.6 365.3,72.5 368.1,75.8 370.7,79.2 372.9,82.9 374.8,86.7 376.3,90.7 377.5,94.8 378.3,99.0 378.8,103.2 379.0,107.5 378.8,111.7 378.4,115.9 377.8,120.0" fill="none" stroke="#dcbb8a" stroke-width="1.3" stroke-linecap="round"/><polyline points="401.3,120.0 400.3,125.3 399.1,130.4 397.8,135.5 396.4,140.5 395.0,145.4 393.5,150.4 391.9,155.3 390.2,160.2 388.4,165.1 386.5,169.9 384.3,174.8 381.9,179.5 379.3,184.2 376.4,188.8 373.1,193.1 369.6,197.3 365.7,201.1 361.5,204.7 357.1,207.9 352.4,210.8 347.6,213.4 342.5,215.6 337.4,217.4 332.1,218.9 326.8,220.2 321.5,221.1 316.1,221.8 310.8,222.3 305.4,222.5 300.0,222.6 294.6,222.4 289.3,221.9 284.0,221.2 278.7,220.3 273.5,219.0 268.3,217.5 263.3,215.6 258.4,213.3 253.7,210.8 249.2,207.9 245.0,204.8 240.9,201.3 237.1,197.6 233.6,193.7 230.3,189.7 227.2,185.5 224.3,181.3 221.6,177.0 218.9,172.7 216.4,168.3 213.9,163.9 211.4,159.4 209.0,154.9 206.6,150.3 204.3,145.6 202.1,140.8 200.0,135.8 198.1,130.7 196.5,125.4 195.1,120.0 194.2,114.5 193.6,108.8 193.6,103.1 194.0,97.5 195.0,91.9 196.5,86.4 198.5,81.0 200.9,75.9 203.8,71.0 207.1,66.4 210.7,62.0 214.5,57.9 218.6,54.1 222.8,50.5 227.2,47.2 231.6,44.0 236.1,41.1 240.6,38.3 245.2,35.7 249.9,33.2 254.6,30.9 259.4,28.8 264.2,26.8 269.2,25.1 274.2,23.6 279.2,22.4 284.4,21.4 289.6,20.8 294.8,20.5 300.0,20.5 305.2,20.8 310.4,21.4 315.5,22.2 320.5,23.3 325.5,24.6 330.5,26.2 335.4,27.8 340.2,29.7 345.0,31.6 349.8,33.7 354.5,36.0 359.3,38.4 363.9,41.1 368.5,43.9 373.0,47.0 377.4,50.3 381.5,54.0 385.4,57.9 389.0,62.2 392.3,66.7 395.2,71.5 397.6,76.6 399.6,81.8 401.0,87.2 402.1,92.6 402.7,98.2 402.8,103.7 402.6,109.2 402.1,114.7 401.3,120.0" fill="none" stroke="#d8b484" stroke-width="1.3" stroke-linecap="round"/><polyline points="423.5,120.0 422.2,126.4 420.8,132.7 419.3,138.9 417.6,145.0 415.9,151.0 414.1,157.1 412.2,163.1 410.2,169.1 408.0,175.0 405.7,181.0 403.1,186.9 400.2,192.8 397.0,198.5 393.4,204.1 389.5,209.5 385.1,214.5 380.4,219.2 375.3,223.6 369.8,227.5 364.1,231.0 358.1,234.1 352.0,236.7 345.6,238.9 339.2,240.7 332.7,242.1 326.2,243.2 319.6,244.0 313.1,244.5 306.5,244.7 300.0,244.7 293.5,244.4 287.0,243.8 280.5,243.0 274.1,241.8 267.8,240.3 261.5,238.4 255.4,236.2 249.5,233.5 243.7,230.5 238.2,227.1 232.9,223.3 228.0,219.2 223.3,214.8 218.9,210.1 214.7,205.3 210.9,200.3 207.2,195.2 203.7,190.0 200.4,184.7 197.2,179.4 194.0,174.0 190.9,168.6 187.9,163.0 184.9,157.4 182.0,151.6 179.3,145.7 176.7,139.5 174.4,133.2 172.5,126.7 170.9,120.0 169.8,113.2 169.3,106.3 169.4,99.3 170.1,92.4 171.4,85.5 173.4,78.8 175.9,72.4 179.1,66.2 182.8,60.3 186.9,54.7 191.4,49.5 196.2,44.6 201.2,40.0 206.4,35.7 211.7,31.7 217.2,28.0 222.6,24.5 228.2,21.1 233.7,18.0 239.4,15.0 245.0,12.1 250.8,9.5 256.7,7.1 262.6,4.9 268.6,3.0 274.8,1.4 281.0,0.1 287.3,-0.8 293.6,-1.3 300.0,-1.5 306.4,-1.3 312.7,-0.7 319.0,0.3 325.2,1.5 331.3,3.0 337.4,4.8 343.5,6.8 349.4,9.0 355.4,11.4 361.2,13.9 367.1,16.7 372.9,19.7 378.6,23.0 384.2,26.5 389.7,30.3 395.0,34.5 400.0,39.0 404.8,43.9 409.1,49.1 413.0,54.7 416.5,60.7 419.3,66.9 421.7,73.3 423.4,79.9 424.6,86.6 425.3,93.4 425.4,100.1 425.1,106.8 424.5,113.5 423.5,120.0" fill="none" stroke="#d4ac7d" stroke-width="1.3" stroke-linecap="round"/><polyline points="445.7,120.0 444.2,127.6 442.6,135.0 440.8,142.3 438.8,149.5 436.8,156.7 434.8,163.8 432.6,170.9 430.3,178.0 427.8,185.1 425.0,192.2 422.0,199.2 418.6,206.2 414.9,213.0 410.6,219.6 406.0,226.0 400.8,231.9 395.2,237.5 389.1,242.7 382.7,247.3 375.9,251.4 368.8,254.9 361.4,258.0 353.9,260.5 346.3,262.6 338.6,264.2 330.9,265.4 323.2,266.3 315.4,266.8 307.7,267.0 300.0,266.9 292.3,266.5 284.7,265.8 277.1,264.8 269.5,263.5 262.0,261.7 254.7,259.5 247.4,256.9 240.4,253.9 233.6,250.4 227.0,246.4 220.7,242.1 214.8,237.3 209.1,232.2 203.8,226.8 198.8,221.2 194.1,215.4 189.6,209.4 185.4,203.3 181.3,197.1 177.4,190.8 173.6,184.4 169.8,178.0 166.2,171.4 162.6,164.6 159.2,157.7 155.9,150.6 152.9,143.3 150.3,135.7 148.0,128.0 146.3,120.0 145.2,111.9 144.7,103.7 144.9,95.4 145.9,87.3 147.7,79.2 150.2,71.3 153.4,63.7 157.3,56.5 161.8,49.6 166.8,43.1 172.2,37.0 178.0,31.4 184.0,26.1 190.2,21.1 196.5,16.5 202.9,12.2 209.3,8.1 215.8,4.1 222.3,0.4 228.9,-3.1 235.5,-6.5 242.2,-9.7 249.1,-12.7 256.0,-15.4 263.1,-17.8 270.3,-19.8 277.6,-21.5 285.0,-22.7 292.5,-23.5 300.0,-23.9 307.5,-23.8 315.1,-23.2 322.5,-22.3 330.0,-20.9 337.3,-19.2 344.6,-17.2 351.8,-14.9 358.9,-12.3 366.0,-9.5 373.0,-6.4 379.9,-3.1 386.8,0.5 393.6,4.4 400.2,8.7 406.7,13.3 412.9,18.3 418.8,23.8 424.4,29.6 429.4,35.9 434.0,42.6 437.9,49.7 441.3,57.1 443.9,64.7 445.9,72.6 447.3,80.5 448.0,88.5 448.1,96.5 447.7,104.5 446.9,112.3 445.7,120.0" fill="none" stroke="#d0a476" stroke-width="1.3" stroke-linecap="round"/><polyline points="463.2,120.0 461.6,128.5 459.7,136.8 457.7,145.0 455.6,153.1 453.4,161.1 451.2,169.1 448.8,177.1 446.3,185.1 443.5,193.1 440.5,201.1 437.2,209.1 433.4,216.9 429.2,224.6 424.5,232.1 419.2,239.2 413.4,245.9 407.1,252.2 400.2,257.9 392.9,263.1 385.3,267.7 377.3,271.6 369.0,275.0 360.6,277.8 352.0,280.0 343.3,281.8 334.7,283.1 326.0,284.0 317.3,284.5 308.6,284.7 300.0,284.5 291.4,284.1 282.8,283.3 274.3,282.2 265.8,280.7 257.5,278.7 249.2,276.4 241.1,273.5 233.1,270.2 225.4,266.4 218.0,262.1 210.9,257.3 204.1,252.0 197.6,246.4 191.5,240.5 185.8,234.2 180.4,227.7 175.2,221.0 170.3,214.2 165.6,207.2 161.1,200.2 156.7,193.0 152.5,185.7 148.3,178.2 144.3,170.6 140.4,162.8 136.8,154.7 133.5,146.4 130.7,137.8 128.3,129.0 126.5,120.0 125.4,110.8 125.0,101.6 125.5,92.4 126.8,83.2 129.0,74.2 132.0,65.4 135.8,57.0 140.3,48.9 145.5,41.3 151.3,34.1 157.5,27.4 164.0,21.2 170.8,15.4 177.7,9.9 184.8,4.8 191.9,-0.0 199.1,-4.6 206.3,-9.0 213.5,-13.2 220.8,-17.3 228.1,-21.1 235.5,-24.8 243.1,-28.3 250.8,-31.5 258.6,-34.4 266.7,-36.9 274.8,-38.9 283.1,-40.5 291.5,-41.6 300.0,-42.2 308.5,-42.3 317.0,-41.8 325.5,-40.9 333.9,-39.5 342.2,-37.6 350.5,-35.4 358.7,-32.8 366.8,-30.0 374.8,-26.7 382.7,-23.2 390.5,-19.4 398.3,-15.3 405.9,-10.8 413.3,-5.9 420.5,-0.5 427.5,5.2 434.0,11.5 440.1,18.2 445.7,25.4 450.7,33.0 455.1,41.0 458.7,49.3 461.6,58.0 463.7,66.8 465.1,75.8 465.8,84.7 465.9,93.7 465.4,102.6 464.5,111.4 463.2,120.0" fill="none" stroke="#cc9d70" stroke-width="1.3" stroke-linecap="round"/><polyline points="485.1,120.0 483.3,129.6 481.2,139.0 479.0,148.4 476.7,157.6 474.3,166.7 471.8,175.8 469.2,184.9 466.4,194.1 463.4,203.2 460.0,212.4 456.3,221.5 452.0,230.5 447.3,239.3 441.9,247.8 435.9,255.9 429.3,263.6 422.1,270.7 414.3,277.3 405.9,283.1 397.2,288.3 388.0,292.7 378.6,296.5 368.9,299.6 359.2,302.1 349.3,304.0 339.4,305.4 329.5,306.4 319.6,306.9 309.8,307.1 300.0,306.9 290.2,306.4 280.5,305.5 270.8,304.2 261.2,302.6 251.6,300.4 242.2,297.8 232.9,294.7 223.9,291.0 215.0,286.8 206.5,282.0 198.3,276.6 190.4,270.8 183.0,264.5 175.9,257.8 169.3,250.7 163.0,243.4 157.0,235.8 151.3,228.0 145.8,220.1 140.6,212.0 135.5,203.8 130.6,195.4 125.9,186.8 121.3,178.1 117.0,169.0 113.0,159.8 109.3,150.2 106.2,140.4 103.7,130.3 101.8,120.0 100.8,109.6 100.6,99.0 101.3,88.5 103.1,78.1 105.7,67.9 109.4,58.1 113.9,48.6 119.2,39.5 125.3,31.0 131.9,22.9 139.0,15.4 146.5,8.4 154.2,1.9 162.1,-4.2 170.1,-9.9 178.1,-15.4 186.1,-20.6 194.2,-25.7 202.2,-30.5 210.4,-35.2 218.6,-39.8 226.9,-44.2 235.4,-48.3 244.1,-52.1 252.9,-55.6 262.0,-58.7 271.3,-61.3 280.7,-63.4 290.3,-64.8 300.0,-65.7 309.7,-65.9 319.5,-65.6 329.2,-64.6 338.9,-63.1 348.5,-61.1 358.0,-58.6 367.4,-55.6 376.7,-52.3 385.9,-48.6 395.0,-44.5 403.9,-40.0 412.7,-35.1 421.3,-29.8 429.7,-24.1 437.9,-17.9 445.7,-11.2 453.0,-3.9 459.9,3.9 466.1,12.1 471.6,20.9 476.4,30.1 480.4,39.7 483.6,49.5 485.9,59.6 487.4,69.8 488.2,80.0 488.2,90.2 487.6,100.3 486.6,110.2 485.1,120.0" fill="none" stroke="#c89569" stroke-width="1.3" stroke-linecap="round"/><polyline points="504.4,120.0 502.5,130.6 500.3,141.1 498.0,151.4 495.5,161.6 493.0,171.7 490.3,181.8 487.6,192.0 484.6,202.2 481.3,212.4 477.7,222.6 473.6,232.7 468.9,242.7 463.7,252.5 457.7,262.0 451.1,271.1 443.8,279.7 435.7,287.6 427.0,294.8 417.7,301.3 408.0,307.0 397.8,311.9 387.3,316.0 376.5,319.4 365.7,322.1 354.7,324.1 343.7,325.6 332.7,326.6 321.8,327.1 310.9,327.3 300.0,327.1 289.2,326.5 278.4,325.5 267.7,324.2 257.0,322.4 246.4,320.1 235.9,317.3 225.6,313.9 215.4,310.0 205.6,305.4 196.0,300.1 186.8,294.3 178.0,287.9 169.6,281.0 161.6,273.7 154.1,265.9 147.0,257.8 140.2,249.4 133.8,240.8 127.7,231.9 121.8,222.9 116.1,213.7 110.6,204.3 105.4,194.7 100.4,184.9 95.7,174.7 91.4,164.3 87.5,153.7 84.2,142.7 81.6,131.4 79.8,120.0 78.8,108.4 78.9,96.8 79.9,85.1 82.1,73.7 85.3,62.5 89.5,51.6 94.7,41.2 100.7,31.3 107.5,21.9 114.9,13.1 122.8,4.9 131.1,-2.7 139.6,-9.9 148.3,-16.6 157.0,-23.0 165.8,-29.0 174.6,-34.9 183.4,-40.5 192.2,-46.0 201.0,-51.4 210.0,-56.7 219.1,-61.7 228.4,-66.6 237.9,-71.1 247.7,-75.2 257.7,-78.9 268.0,-82.0 278.5,-84.6 289.2,-86.4 300.0,-87.6 310.9,-88.0 321.8,-87.7 332.8,-86.8 343.6,-85.2 354.4,-82.9 365.0,-80.1 375.5,-76.8 385.9,-73.0 396.1,-68.7 406.2,-64.0 416.1,-58.8 425.9,-53.3 435.4,-47.2 444.6,-40.6 453.6,-33.6 462.1,-25.9 470.1,-17.7 477.5,-9.0 484.3,0.3 490.2,10.2 495.4,20.4 499.7,31.1 503.1,42.0 505.5,53.2 507.1,64.5 507.9,75.8 507.9,87.1 507.2,98.2 506.1,109.2 504.4,120.0" fill="none" stroke="#c48e63" stroke-width="1.3" stroke-linecap="round"/><polyline points="183.0,322.7 172.5,316.3 162.5,309.2 153.0,301.5 143.9,293.3 135.4,284.6 127.2,275.6 119.6,266.1 112.3,256.4 105.3,246.4 98.7,236.2 92.3,225.8 86.2,215.2 80.4,204.3 74.9,193.1 69.7,181.7 65.0,169.9 60.9,157.9 57.4,145.5 54.7,132.9 52.9,120.0 52.1,107.0 52.4,94.0 53.8,81.0 56.5,68.2 60.2,55.8 65.2,43.7 71.1,32.1 78.0,21.1 85.7,10.8 94.0,1.1 102.9,-8.0 112.1,-16.5 121.5,-24.5 131.1,-32.0 140.8,-39.2 150.5,-46.1 160.2,-52.7 169.8,-59.2 179.5,-65.6 189.3,-71.8 199.1,-77.9 209.2,-83.9 219.5,-89.6 230.2,-95.0 241.1,-99.9 252.3,-104.3 263.9,-108.1 275.7,-111.2 287.8,-113.5 300.0,-115.0 312.3,-115.6 324.7,-115.4 337.1,-114.4 349.4,-112.5 361.6,-110.0 373.7,-106.7 385.6,-102.9 397.2,-98.4 408.8,-93.4 420.1,-88.0 431.1,-82.0 442.0,-75.4 452.6,-68.4 462.8,-60.8 472.7,-52.7 482.0,-43.9 490.8,-34.5 499.0,-24.6 506.4,-14.0 512.9,-2.9 518.5,8.7 523.2,20.6 526.8,32.9 529.5,45.4 531.2,58.1 532.0,70.7 532.0,83.3 531.3,95.7 530.0,107.9 528.3,120.0 526.2,131.9 523.9,143.5 521.4,155.1 518.8,166.5 516.1,177.9 513.3,189.3 510.3,200.7 507.1,212.2 503.6,223.7 499.6,235.2 495.1,246.7 489.9,258.0 484.1,269.1" fill="none" stroke="#b07a1e" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <p class="sv-kicker">Faculty of Science, The University of Sydney</p>
+    <h1 class="sv-title">Generative AI in Scientific Research</h1>
+    <p class="sv-sub">Survey of researchers, for the event on Thursday 12 November 2026</p>
+    <p class="sv-lede"><b data-draw="cell" data-source="headline" data-field="value" data-where="metric=responses">—</b> researchers answered between <b data-draw="cell" data-source="headline" data-field="value" data-where="metric=first">—</b> and <b data-draw="cell" data-source="headline" data-field="value" data-where="metric=last">—</b>. Almost all expect generative AI to reshape their field, most already use it routinely, and feelings are mixed: excitement sits beside conflict about training, quality and control.</p>
+  </header>
+
+  <div class="sv-tiles">
+    <div class="sv-tile"><span class="k">Responses</span><span class="v" data-draw="cell" data-source="headline" data-field="value" data-where="metric=responses">—</span><span class="s">across <span data-draw="cell" data-source="headline" data-field="value" data-where="metric=schools">—</span> Schools and units</span></div>
+    <div class="sv-tile"><span class="k">Expect at least a significant shift</span><span class="v"><span data-draw="cell" data-source="headline" data-field="value" data-where="metric=major_change">—</span>%</span><span class="s">in their research area within 2–3 years</span></div>
+    <div class="sv-tile"><span class="k">Use it routinely</span><span class="v"><span data-draw="cell" data-source="headline" data-field="value" data-where="metric=routine">—</span>%</span><span class="s">embedded in their work or deeply integrated</span></div>
+    <div class="sv-tile"><span class="k">Feel excited</span><span class="v"><span data-draw="cell" data-source="headline" data-field="value" data-where="metric=excited">—</span>%</span><span class="s">and <span data-draw="cell" data-source="headline" data-field="value" data-where="metric=conflicted">—</span>% conflicted (select all that apply)</span></div>
+  </div>
+
+  <section class="sv-section" id="perspectives">
+    <p class="sv-eyebrow">Part I</p>
+    <h2 class="sv-h2">Perspectives: how researchers feel, and what they expect</h2>
+    <div class="sv-grid">
+      <div class="sv-card" id="feelings">
+        <h3>How do you feel about using generative AI for research?</h3>
+        <p class="sv-note">Select all that apply. Share of all respondents; each bar is split by career stage.</p>
+        <div class="sv-legend"><span><i style="background: var(--sv-c0)"></i>🎓 HDR</span><span><i style="background: var(--sv-c1)"></i>🌱 Postdoc / ECR</span><span><i style="background: var(--sv-c2)"></i>🌳 Mid-career</span><span><i style="background: var(--sv-c3)"></i>🦉 Senior</span><span><i style="background: var(--cds-chart-muted)"></i>✨ Other</span></div>
+        <div class="sv-chart dash-skeleton" data-draw="stackbars" data-source="feelings"></div>
+        <p class="sv-note">Write-ins: <span data-draw="writeins" data-source="writeins">—</span></p>
+      </div>
+      <div class="sv-card" id="mix">
+        <h3>Most feelings are mixed or positive</h3>
+        <p class="sv-note">Positive means excited or curious. Concerned means conflicted, anxious, skeptical, or frustrated or angry. Each bar is split by career stage.</p>
+        <div class="sv-legend"><span><i style="background: var(--sv-c0)"></i>🎓 HDR</span><span><i style="background: var(--sv-c1)"></i>🌱 Postdoc / ECR</span><span><i style="background: var(--sv-c2)"></i>🌳 Mid-career</span><span><i style="background: var(--sv-c3)"></i>🦉 Senior</span><span><i style="background: var(--cds-chart-muted)"></i>✨ Other</span></div>
+        <div class="sv-chart dash-skeleton" data-draw="stackbars" data-source="feeling_mix"></div>
+      </div>
+      <div class="sv-card" id="outlook">
+        <h3>How will generative AI shape your research area over the next 2–3 years?</h3>
+        <p class="sv-note">Only <b data-draw="cell" data-source="headline" data-field="value" data-where="metric=minimal">—</b> respondents expect minimal change.</p>
+        <div class="sv-legend"><span><i style="background: var(--sv-c0)"></i>🎓 HDR</span><span><i style="background: var(--sv-c1)"></i>🌱 Postdoc / ECR</span><span><i style="background: var(--sv-c2)"></i>🌳 Mid-career</span><span><i style="background: var(--sv-c3)"></i>🦉 Senior</span><span><i style="background: var(--cds-chart-muted)"></i>✨ Other</span></div>
+        <div class="sv-chart dash-skeleton" data-draw="stackbars" data-source="outlook"></div>
+      </div>
+      <div class="sv-card wide" id="perspective-themes">
+        <h3>What people said: perspectives, thoughts and concerns</h3>
+        <p class="sv-note"><b data-draw="cell" data-source="headline" data-field="value" data-where="metric=p_comments">—</b> people left a comment. Each comment is split into excerpts and each excerpt coded to a theme, so a comment can count toward several themes. Bars count people. Click a theme to read the excerpts behind it.</p>
+        <div class="sv-split">
+          <div class="sv-chart dash-skeleton" data-draw="themes" data-source="p_themes" data-kind="p"></div>
+          <div class="sv-quotes" data-draw="quotes" data-source="segments p_themes" data-kind="p"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sv-section" id="use">
+    <p class="sv-eyebrow">Part II</p>
+    <h2 class="sv-h2">Use: how the Faculty is using generative AI</h2>
+    <div class="sv-grid">
+      <div class="sv-card" id="use-levels">
+        <h3>How would you describe your current use?</h3>
+        <p class="sv-note">From not using it to can't imagine working without it.</p>
+        <div class="sv-chart dash-skeleton" data-draw="bars" data-source="use_levels"></div>
+      </div>
+      <div class="sv-card" id="excitement">
+        <h3>Excitement and concern at each level of use</h3>
+        <p class="sv-note">Share of each use level who feel excited, and who report a concern (conflicted, anxious, skeptical, or frustrated or angry).</p>
+        <div class="sv-legend"><span><i style="background: var(--sv-c0)"></i>🤩 Excited</span><span><i style="background: var(--sv-c1)"></i>😟 Concerned</span></div>
+        <div class="sv-chart dash-skeleton" data-draw="excite" data-source="excite_by_use"></div>
+      </div>
+      <div class="sv-card wide" id="career">
+        <h3>Current use by career stage</h3>
+        <p class="sv-note">Share of each career stage at each level of use. Senior researchers are the most likely to be tinkering.</p>
+        <div class="sv-legend"><span><i style="background: var(--cds-chart-muted)"></i>🚫 Not for me</span><span><i style="background: var(--cds-chart-muted); opacity: .45"></i>🐣 Haven't tried it yet</span><span><i style="background: var(--sv-c0); opacity: .35"></i>🧪 Tinkering</span><span><i style="background: var(--sv-c0); opacity: .65"></i>🛠️ Embedded</span><span><i style="background: var(--sv-c0)"></i>🤖 Deeply integrated</span></div>
+        <div class="sv-chart dash-skeleton" data-draw="career" data-source="use_by_career"></div>
+      </div>
+      <div class="sv-card wide" id="use-themes">
+        <h3>What people use it for</h3>
+        <p class="sv-note"><b data-draw="cell" data-source="headline" data-field="value" data-where="metric=u_comments">—</b> people shared examples from their research group or field. Lists are split into their separate items, each coded to a kind of use. Bars count people. Click a use to read its excerpts.</p>
+        <div class="sv-split">
+          <div class="sv-chart dash-skeleton" data-draw="themes" data-source="u_themes" data-kind="u"></div>
+          <div class="sv-quotes" data-draw="quotes" data-source="segments u_themes" data-kind="u"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sv-section" id="career-stage">
+    <p class="sv-eyebrow">Across career stages</p>
+    <h2 class="sv-h2">Does it change with career stage?</h2>
+    <p class="sv-lede">Use differs a lot between career stages, but feelings and expectations barely do. <b data-draw="cell" data-source="senior_vs_rest" data-field="senior_pct" data-where="measure=routine">—</b>% of senior researchers use it routinely, against <b data-draw="cell" data-source="senior_vs_rest" data-field="others_pct" data-where="measure=routine">—</b>% of everyone else (Fisher's exact test, p = <b data-draw="cell" data-source="senior_vs_rest" data-field="p" data-where="measure=routine">—</b>). Senior researchers are no less excited, and expect as much change, as earlier-career colleagues; if anything they report fewer concerns.</p>
+    <div class="sv-grid">
+      <div class="sv-card wide" id="stage-feelings">
+        <h3>Feelings by career stage</h3>
+        <p class="sv-note">Percent of each career stage choosing each feeling (select all that apply). Darker cells are more common.</p>
+        <div class="sv-chart dash-skeleton" data-draw="feelgrid" data-source="feelings_by_career"></div>
+      </div>
+      <div class="sv-card wide" id="stage-mix">
+        <h3>Positive, concerned or both, by career stage</h3>
+        <p class="sv-note">Each person counted once. Positive means excited or curious; concerned means conflicted, anxious, skeptical, or frustrated or angry.</p>
+        <div class="sv-legend"><span><i style="background: var(--sv-c0)"></i>😊 Positive only</span><span><i style="background: var(--sv-c2)"></i>🎭 Both</span><span><i style="background: var(--sv-c1)"></i>😟 Concerned only</span><span><i style="background: var(--cds-chart-muted)"></i>😶 Neither</span></div>
+        <div class="sv-chart dash-skeleton" data-draw="mixstage" data-source="mix_by_career"></div>
+      </div>
+      <div class="sv-card wide" id="stage-table">
+        <h3>Which answers vary most with career stage?</h3>
+        <p class="sv-note">Every answer option, ranked by a chi-square test across the four career stages (3 degrees of freedom); the smallest p varies most. Bold rows have p below 0.05. With 8 to 31 people per stage and many cells of only one to three people, the p-values are approximate and none survives a correction for testing this many answers. The two "Other" respondents are left out.</p>
+        <div class="sv-tablewrap">
+          <table class="sv-table" data-source="career_measures" data-row-key="measure">
+            <thead><tr>
+              <th data-field="measure">Answer</th>
+              <th data-field="question">Question</th>
+              <th data-field="hdr">🎓 HDR</th>
+              <th data-field="ecr">🌱 Postdoc / ECR</th>
+              <th data-field="mid">🌳 Mid-career</th>
+              <th data-field="senior">🦉 Senior</th>
+              <th data-field="range">Range (points)</th>
+              <th data-field="p">p</th>
+            </tr></thead>
+            <tbody data-draw="careertable"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="sv-card wide">
+        <h3>Senior researchers compared with everyone else</h3>
+        <p class="sv-note">Percent of each group. p is from Fisher's exact test; a darker label marks p below 0.05. With six comparisons, only the routine-use gap survives a Bonferroni correction (0.05 ÷ 6 ≈ 0.008), and only just.</p>
+        <div class="sv-legend"><span><i style="background: var(--sv-c1)"></i>🦉 Senior researchers</span><span><i style="background: var(--sv-c0)"></i>🎓🌱🌳 HDR, early- and mid-career</span></div>
+        <div class="sv-chart dash-skeleton" data-draw="dumbbell" data-source="senior_vs_rest"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sv-section" id="respondents">
+    <p class="sv-eyebrow">Context</p>
+    <h2 class="sv-h2">Who responded</h2>
+    <div class="sv-grid">
+      <div class="sv-card">
+        <h3>School or unit</h3>
+        <p class="sv-note">Physics is over-represented, since the survey was organized from Physics.</p>
+        <div class="sv-chart dash-skeleton" data-draw="bars" data-source="schools"></div>
+      </div>
+      <div class="sv-card">
+        <h3>Career stage</h3>
+        <p class="sv-note">Respondents chose their own career stage.</p>
+        <div class="sv-chart dash-skeleton" data-draw="bars" data-source="careers"></div>
+      </div>
+    </div>
+    <p class="sv-method">How this was made: responses come from the event's Microsoft Forms survey, which was anonymous. Talk-proposal details (names, emails and titles) are left out, and one comment's contact details were removed. Claude read every free-text answer, split it into excerpts (each list item, or each sentence or run of sentences on one point) and coded each excerpt into a theme by hand. A comment can carry several themes, so theme counts add up to more than the number of comments. For this public version, each quote shows only the respondent's career stage. Excerpts that could identify someone (a named unit, a thesis topic, a distinctive research program) are withheld, and a few others are lightly edited in [square brackets] to blur the field. Respondent-level data is published without IDs, Schools, timestamps or free text, in shuffled order.</p>
+  </section>
+  <p class="sv-foot">Organized by A/Prof Ben Fulcher, School of Physics. Survey analysis and page built with Claude.</p>
+</div>
+
+<script>{
+  // Shared drawing helpers. Colors stay CSS variables so they follow the theme.
+  document.querySelectorAll('.sv').forEach((el) => { el.style.setProperty('--sv-c0', dash.colors[0]); el.style.setProperty('--sv-c1', dash.colors[1]); el.style.setProperty('--sv-c2', dash.colors[2]); el.style.setProperty('--sv-c3', dash.colors[3]); });
+  window.SV = window.SV || { pick: { p: null, u: null }, meta: {} };
+  const SV = window.SV;
+
+  // Emoji for each answer: the survey's own where it had one, otherwise chosen to match.
+  SV.emoji = {
+    'Excited': '🤩', 'Curious': '🤔', 'Conflicted': '⚖️', 'Anxious': '😬', 'Skeptical': '🤨', 'Frustrated or angry': '😤', 'Neutral': '😐', 'Other (write-in)': '✏️',
+    'Positive only': '😊', 'Both positive and concerned': '🎭', 'Concerned only': '😟', 'Neither (neutral or write-in only)': '😶',
+    'Small changes, overall minimal': '💧', 'Significant shift in some aspects': '🌊', 'Substantial change in most aspects': '🌪️', 'Huge shift requiring structural change': '🌋',
+    'Not for me (by choice)': '🚫', "Haven't really tried it yet": '🐣', 'Tinkering': '🧪', 'Embedded in some of my work': '🛠️', 'Deeply integrated': '🤖',
+    'Physics': '⚛️', 'Life and Environmental Sciences': '🌿', 'Psychology': '🧠', 'Mathematics and Statistics': '🧮', 'Geosciences': '🌏',
+    'Veterinary Science': '🐾', 'Chemistry': '⚗️', 'History and Philosophy of Science': '📜',
+    'HDR student': '🎓', 'Postdoc / early-career researcher': '🌱', 'Mid-career researcher': '🌳', 'Senior researcher': '🦉', 'Other': '✨',
+    'Training, critical thinking and deskilling': '🧑‍🎓', 'Research quality, peer review and integrity': '📝', 'Productivity and new capabilities': '⚡',
+    "Careers and the researcher's role": '💼', 'Corporate control, openness and data': '🏢', 'Outputs need expert checking': '✅',
+    'Keeping up and wanting to learn': '📚', 'Environmental cost': '🌍', 'Ethics and responsible use': '🧭', 'Grief and loss of the joy of research': '💔',
+    'Not relevant to my field': '🚷',
+    'Any concern': '😟', 'Left a perspective comment': '💬', 'Gave a use example': '🧰', 'Expect substantial or huge change': '🌪️', 'Use routinely': '🛠️',
+    'Coding and software': '💻', 'Literature search and synthesis': '🔎', 'Writing and editing': '✍️', 'Data analysis and modelling': '📊',
+    'Workflow, admin and project tracking': '🗂️', 'Ideas and thinking partner': '💡', 'Maths and theory': '📐', 'Figures and plotting': '📈',
+    'Teaching and learning': '🧑‍🏫', 'Not used in my field': '🚷',
+  };
+  SV.lab = (s) => (SV.emoji[s] ? `${SV.emoji[s]} ${s}` : s);
+  // Shrink a label to fit its width, then shorten it with an ellipsis if it still doesn't.
+  SV.fit = (sel, width) => sel.each(function () {
+    const t = d3.select(this), full = t.text();
+    let size = +t.attr('font-size') || 13;
+    while (this.getComputedTextLength() > width && size > 10) { size -= 0.5; t.attr('font-size', size); }
+    let txt = full;
+    while (this.getComputedTextLength() > width && txt.length > 4) { txt = txt.slice(0, -2); t.text(txt + '…'); }
+  });
+
+  SV.state = (el, id) => {
+    const d = dash.data(id);
+    if (d.status === 'ok') { el.classList.remove('dash-skeleton'); return d; }
+    if (d.status === 'error' || d.status === 'declined' || d.status === 'missing') {
+      el.classList.remove('dash-skeleton');
+      const f = document.createElement('div'); f.className = 'sv-fail'; f.textContent = 'Failed to load';
+      el.replaceChildren(f);
+    } else { el.replaceChildren(); el.classList.add('dash-skeleton'); }
+    return null;
+  };
+
+  SV.tip = (el) => {
+    let t = el.querySelector(':scope > .sv-tip');
+    if (!t) { t = document.createElement('div'); t.className = 'sv-tip'; t.hidden = true; el.appendChild(t); }
+    return {
+      show(ev, head, line) {
+        t.replaceChildren();
+        const a = document.createElement('div'); a.className = 't'; a.textContent = head;
+        const b = document.createElement('div'); b.textContent = line;
+        t.append(a, b); t.hidden = false;
+        const box = el.getBoundingClientRect();
+        let x = ev.clientX - box.left + 12, y = ev.clientY - box.top + 12;
+        const w = t.offsetWidth, h = t.offsetHeight;
+        if (x + w > box.width) x = Math.max(0, ev.clientX - box.left - w - 12);
+        if (y + h > box.height) y = Math.max(0, ev.clientY - box.top - h - 12);
+        t.style.left = x + 'px'; t.style.top = y + 'px';
+      },
+      hide() { t.hidden = true; },
+    };
+  };
+
+  // Wrap a label onto as many lines as it needs within width; returns the line count.
+  SV.wrap = (t, width, str, lh = 16) => {
+    t.text(null);
+    const words = str.split(' ');
+    let line = [], n = 0, ts = t.append('tspan').attr('x', 0).attr('y', 13);
+    words.forEach((w) => {
+      line.push(w); ts.text(line.join(' '));
+      if (ts.node().getComputedTextLength() > width && line.length > 1) {
+        line.pop(); ts.text(line.join(' ')); line = [w]; n += 1;
+        ts = t.append('tspan').attr('x', 0).attr('y', 13 + n * lh).text(w);
+      }
+    });
+    return n + 1;
+  };
+
+  // Horizontal bars, each label above its bar (wrapping when long) so labels fit at any width.
+  // With opt.stack, each bar is split into one segment per career stage.
+  SV.stages = [['c_hdr', 'HDR student'], ['c_ecr', 'Postdoc / early-career researcher'], ['c_mid', 'Mid-career researcher'], ['c_senior', 'Senior researcher'], ['c_other', 'Other']];
+  SV.hbar = (el, rows, opt = {}) => {
+    el.querySelectorAll('svg').forEach((s) => s.remove());
+    const W = Math.max(260, el.clientWidth || 360), lh = 16;
+    const svg = d3.select(el).insert('svg', ':first-child').attr('width', '100%').attr('role', 'img');
+    const fmtV = (r) => `${r.n} · ${r.pct}%`;
+    const probe = svg.append('text').attr('font-size', 12).text(rows.length ? rows.map(fmtV).reduce((a, b) => (a.length > b.length ? a : b)) : '');
+    const vw = probe.node().getComputedTextLength() + 10; probe.remove();
+    const max = opt.max ?? d3.max(rows, (r) => r.n) ?? 1;
+    const x = d3.scaleLinear([0, max || 1], [0, Math.max(40, W - vw)]);
+    const tip = SV.tip(el);
+    const fill = [dash.colors[0], dash.colors[1], dash.colors[2], dash.colors[3], 'var(--cds-chart-muted)'];
+    let y = 2;
+    rows.forEach((r) => {
+      const g = svg.append('g').attr('transform', `translate(0,${y})`);
+      const dim = opt.selected && opt.selected !== r.label;
+      const t = g.append('text').attr('font-size', 13).attr('class', dim ? 'mut' : null).attr('font-weight', opt.selected === r.label ? 600 : null);
+      const lines = SV.wrap(t, W - 2, SV.lab(r.label), lh);
+      const by = 5 + lines * lh;
+      if (opt.stack) {
+        let acc = 0;
+        SV.stages.forEach(([k, name], si) => {
+          const v = r[k] || 0; if (!v) return;
+          const x0 = acc; acc += v;
+          g.append('rect').attr('x', x(x0)).attr('y', by).attr('height', 14).attr('width', Math.max(1, x(v) - x(0) - 1)).style('fill', fill[si])
+            .on('mousemove', (ev) => tip.show(ev, SV.lab(r.label), `${SV.lab(name)}: ${v} of the ${r.n}`)).on('mouseleave', () => tip.hide());
+        });
+      } else {
+        g.append('rect').attr('class', 'bar' + (opt.onClick ? ' click' : '')).attr('y', by).attr('height', 14).attr('rx', 3)
+          .attr('width', Math.max(2, x(r.n))).style('fill', opt.color ? opt.color(r) : dash.colors[0]).style('opacity', dim ? 0.45 : 1)
+          .on('mousemove', (ev) => tip.show(ev, SV.lab(r.label), `${r.n} of ${r.total} respondents (${r.pct}%)`)).on('mouseleave', () => tip.hide());
+      }
+      g.append('text').attr('class', 'mut').attr('x', Math.max(2, x(r.n)) + 6).attr('y', by + 12).attr('font-size', 12)
+        .style('font-variant-numeric', 'tabular-nums').text(fmtV(r));
+      if (opt.onClick) g.style('cursor', 'pointer').on('click', () => opt.onClick(r));
+      y += by + 22;
+    });
+    svg.attr('viewBox', `0 0 ${W} ${Math.max(1, y - 6)}`);
+  };
+  SV.stack = (el, rows) => SV.hbar(el, rows, { stack: true });
+}</script>
+
+<script>{
+  // Everything on the page is worked out from the one responses file.
+  dash.calc('headline', {
+    inputs: ['responses'], title: 'Headline figures', description: 'Response count, date range and the shares quoted in the tiles, rounded to whole percent.',
+    fn: (responses) => {
+      const n = responses.length, pct = (k) => Math.round((100 * k) / n);
+      const has = (r, f) => (r.feelings || '').split(';').includes(f);
+      const dates = [SV.meta.first, SV.meta.last];
+      const major = responses.filter((r) => Number(r.outlook_order) >= 2).length;
+      return [
+        { metric: 'responses', value: n },
+        { metric: 'schools', value: SV.meta.schools },
+        { metric: 'first', value: dates[0] },
+        { metric: 'last', value: dates[dates.length - 1] },
+        { metric: 'major_change', value: pct(major) },
+        { metric: 'minimal', value: n - major },
+        { metric: 'routine', value: pct(responses.filter((r) => Number(r.use_order) >= 4).length) },
+        { metric: 'excited', value: pct(responses.filter((r) => has(r, 'Excited')).length) },
+        { metric: 'conflicted', value: pct(responses.filter((r) => has(r, 'Conflicted')).length) },
+        { metric: 'p_comments', value: responses.filter((r) => r.perspective_text).length },
+        { metric: 'u_comments', value: responses.filter((r) => r.use_text).length },
+      ];
+    },
+  });
+
+  dash.calc('feelings', {
+    inputs: ['responses'], title: 'Feelings about generative AI', description: 'Respondents choosing each feeling (select all that apply), as a share of all respondents, with the count from each career stage.',
+    fn: (responses) => {
+      const stage = { 'HDR student': 'c_hdr', 'Postdoc / early-career researcher': 'c_ecr', 'Mid-career researcher': 'c_mid', 'Senior researcher': 'c_senior' };
+      const order = ['Excited', 'Curious', 'Conflicted', 'Anxious', 'Skeptical', 'Frustrated or angry', 'Neutral', 'Other'];
+      const n = responses.length;
+      const rows = order.map((f) => {
+        const sub = responses.filter((r) => (r.feelings || '').split(';').includes(f));
+        const row = { label: f === 'Other' ? 'Other (write-in)' : f, n: sub.length, total: n, pct: Math.round((100 * sub.length) / n), c_hdr: 0, c_ecr: 0, c_mid: 0, c_senior: 0, c_other: 0 };
+        sub.forEach((r) => { row[stage[r.career] || 'c_other'] += 1; });
+        return row;
+      });
+      const other = rows.pop();
+      return [...rows.sort((a, b) => b.n - a.n), other];
+    },
+  });
+
+  dash.calc('feeling_mix', {
+    inputs: ['responses'], title: 'Positive, concerned or both', description: 'Each respondent grouped by whether they chose a positive feeling (excited, curious), a concern (conflicted, anxious, skeptical, frustrated or angry), both, or neither, with the count from each career stage.',
+    fn: (responses) => {
+      const stage = { 'HDR student': 'c_hdr', 'Postdoc / early-career researcher': 'c_ecr', 'Mid-career researcher': 'c_mid', 'Senior researcher': 'c_senior' };
+      const pos = ['Excited', 'Curious'], neg = ['Conflicted', 'Anxious', 'Skeptical', 'Frustrated or angry'];
+      const n = responses.length;
+      const rows = ['Positive only', 'Both positive and concerned', 'Concerned only', 'Neither (neutral or write-in only)']
+        .map((label) => ({ label, n: 0, total: n, pct: 0, c_hdr: 0, c_ecr: 0, c_mid: 0, c_senior: 0, c_other: 0 }));
+      responses.forEach((r) => {
+        const f = (r.feelings || '').split(';'), p = f.some((x) => pos.includes(x)), c = f.some((x) => neg.includes(x));
+        const row = rows[p && c ? 1 : p ? 0 : c ? 2 : 3];
+        row.n += 1; row[stage[r.career] || 'c_other'] += 1;
+      });
+      rows.forEach((row) => { row.pct = Math.round((100 * row.n) / n); });
+      return rows;
+    },
+  });
+
+  dash.calc('outlook', {
+    inputs: ['responses'], title: 'Expected change in 2–3 years', description: 'Respondents at each expected level of change, from minimal to a huge shift, with the count from each career stage.',
+    fn: (responses) => {
+      const stage = { 'HDR student': 'c_hdr', 'Postdoc / early-career researcher': 'c_ecr', 'Mid-career researcher': 'c_mid', 'Senior researcher': 'c_senior' };
+      const n = responses.length;
+      return [1, 2, 3, 4].map((order) => {
+        const sub = responses.filter((r) => Number(r.outlook_order) === order);
+        const row = { order, label: sub.length ? sub[0].outlook : String(order), n: sub.length, total: n, pct: Math.round((100 * sub.length) / n), c_hdr: 0, c_ecr: 0, c_mid: 0, c_senior: 0, c_other: 0 };
+        sub.forEach((r) => { row[stage[r.career] || 'c_other'] += 1; });
+        return row;
+      }).filter((r) => r.n > 0);
+    },
+  });
+
+  dash.calc('use_levels', {
+    inputs: ['responses'], title: 'Current use', description: 'Respondents at each level of current use, from not using it to deeply integrated.',
+    fn: (responses) => {
+      const n = responses.length, by = d3.rollup(responses, (v) => ({ n: v.length, label: v[0].use }), (r) => Number(r.use_order));
+      return [...by].sort((a, b) => a[0] - b[0]).map(([order, v]) => ({ order, label: v.label, n: v.n, total: n, pct: Math.round((100 * v.n) / n) }));
+    },
+  });
+
+  dash.calc('use_by_career', {
+    inputs: ['responses'], title: 'Use by career stage', description: 'For each career stage, the share of its respondents at each level of use.',
+    fn: (responses) => {
+      const careers = ['HDR student', 'Postdoc / early-career researcher', 'Mid-career researcher', 'Senior researcher', 'Other'];
+      const out = [];
+      careers.forEach((career) => {
+        const sub = responses.filter((r) => r.career === career);
+        [1, 2, 3, 4, 5].forEach((order) => {
+          const k = sub.filter((r) => Number(r.use_order) === order).length;
+          const lab = (responses.find((r) => Number(r.use_order) === order) || {}).use || String(order);
+          out.push({ career, order, use: lab, n: k, total: sub.length, pct: sub.length ? Math.round((100 * k) / sub.length) : 0 });
+        });
+      });
+      return out;
+    },
+  });
+
+  dash.calc('excite_by_use', {
+    inputs: ['responses'], title: 'Excitement and concern by use', description: 'For each level of use, the share of its respondents who chose excited, and who chose at least one concern.',
+    fn: (responses) => {
+      const neg = ['Conflicted', 'Anxious', 'Skeptical', 'Frustrated or angry'];
+      return [1, 2, 3, 4, 5].map((order) => {
+        const sub = responses.filter((r) => Number(r.use_order) === order);
+        const f = sub.map((r) => (r.feelings || '').split(';'));
+        const ex = f.filter((x) => x.includes('Excited')).length, co = f.filter((x) => x.some((y) => neg.includes(y))).length;
+        return { order, use: sub.length ? sub[0].use : String(order), n: sub.length, excited: ex, concerned: co,
+          excited_pct: sub.length ? Math.round((100 * ex) / sub.length) : 0, concerned_pct: sub.length ? Math.round((100 * co) / sub.length) : 0 };
+      }).filter((r) => r.n > 0);
+    },
+  });
+
+  dash.calc('p_themes', {
+    inputs: ['segments'], title: 'Themes in perspective comments', description: 'People whose perspective comment has at least one excerpt coded to each theme, as a share of people who commented; excerpts counts every coded excerpt.',
+    fn: (segments) => {
+      const s = segments.filter((r) => r.kind === 'p'), people = new Set(s.map((r) => r.id)).size, ids = new Map(), ex = new Map();
+      s.forEach((r) => (r.themes || '').split(';').filter(Boolean).forEach((t) => {
+        if (!ids.has(t)) ids.set(t, new Set());
+        ids.get(t).add(r.id); ex.set(t, (ex.get(t) || 0) + 1);
+      }));
+      return [...ids].map(([label, v]) => ({ label, n: v.size, excerpts: ex.get(label), total: people, pct: Math.round((100 * v.size) / people) })).sort((a, b) => b.n - a.n || b.excerpts - a.excerpts);
+    },
+  });
+
+  dash.calc('u_themes', {
+    inputs: ['segments'], title: 'Kinds of use in examples', description: 'People whose use example has at least one excerpt coded to each kind of use, as a share of people who gave examples; excerpts counts every coded excerpt.',
+    fn: (segments) => {
+      const s = segments.filter((r) => r.kind === 'u'), people = new Set(s.map((r) => r.id)).size, ids = new Map(), ex = new Map();
+      s.forEach((r) => (r.themes || '').split(';').filter(Boolean).forEach((t) => {
+        if (!ids.has(t)) ids.set(t, new Set());
+        ids.get(t).add(r.id); ex.set(t, (ex.get(t) || 0) + 1);
+      }));
+      return [...ids].map(([label, v]) => ({ label, n: v.size, excerpts: ex.get(label), total: people, pct: Math.round((100 * v.size) / people) })).sort((a, b) => b.n - a.n || b.excerpts - a.excerpts);
+    },
+  });
+
+  dash.calc('career_measures', {
+    inputs: ['responses'], title: 'Answers ranked by career-stage variation', description: 'For every answer option, the percent of each career stage choosing it, the range between stages, and a chi-square test (3 df) across the four stages, sorted by p.',
+    fn: (responses) => {
+      const stages = [['hdr', 'HDR student'], ['ecr', 'Postdoc / early-career researcher'], ['mid', 'Mid-career researcher'], ['senior', 'Senior researcher']];
+      const neg = ['Conflicted', 'Anxious', 'Skeptical', 'Frustrated or angry'];
+      const f = (r) => (r.feelings || '').split(';');
+      const label = (key, order) => (responses.find((r) => Number(r[key]) === order) || {})[key === 'use_order' ? 'use' : 'outlook'];
+      const tests = [];
+      ['Excited', 'Curious', 'Conflicted', 'Anxious', 'Skeptical', 'Frustrated or angry', 'Neutral'].forEach((x) => tests.push([x, 'Feeling', (r) => f(r).includes(x)]));
+      tests.push(['Any concern', 'Feeling', (r) => f(r).some((x) => neg.includes(x))]);
+      [1, 2, 3, 4].forEach((o) => tests.push([label('outlook_order', o), 'Outlook', (r) => Number(r.outlook_order) === o]));
+      tests.push(['Expect substantial or huge change', 'Outlook', (r) => Number(r.outlook_order) >= 3]);
+      [1, 2, 3, 4, 5].forEach((o) => tests.push([label('use_order', o), 'Use', (r) => Number(r.use_order) === o]));
+      tests.push(['Use routinely', 'Use', (r) => Number(r.use_order) >= 4]);
+      tests.push(['Left a perspective comment', 'Comment', (r) => !!r.perspective_text]);
+      tests.push(['Gave a use example', 'Comment', (r) => !!r.use_text]);
+      // Chi-square survival function for 3 degrees of freedom, with an erfc approximation (Abramowitz and Stegun 7.1.26).
+      const erfc = (z) => { const t = 1 / (1 + 0.3275911 * z); return t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-z * z); };
+      const sf3 = (x) => Math.min(1, erfc(Math.sqrt(x / 2)) + Math.sqrt((2 * x) / Math.PI) * Math.exp(-x / 2));
+      const groups = stages.map(([, c]) => responses.filter((r) => r.career === c));
+      const N = groups.reduce((a, g) => a + g.length, 0);
+      return tests.filter(([m]) => m).map(([measure, question, test]) => {
+        const yes = groups.map((g) => g.filter(test).length), total = yes.reduce((a, b) => a + b, 0);
+        let chi = 0;
+        groups.forEach((g, i) => {
+          const e1 = (g.length * total) / N, e0 = g.length - e1;
+          if (e1 > 0) chi += (yes[i] - e1) ** 2 / e1;
+          if (e0 > 0) chi += (g.length - yes[i] - e0) ** 2 / e0;
+        });
+        const pct = groups.map((g, i) => (g.length ? Math.round((100 * yes[i]) / g.length) : 0));
+        const row = { measure, question, total };
+        stages.forEach(([k], i) => { row[k] = pct[i]; });
+        row.range = Math.max(...pct) - Math.min(...pct);
+        row.p = total > 0 && total < N ? Number(sf3(chi).toFixed(3)) : 1;
+        return row;
+      }).sort((a, b) => a.p - b.p || b.range - a.range);
+    },
+  });
+
+  dash.calc('feelings_by_career', {
+    inputs: ['responses'], title: 'Feelings by career stage', description: 'Percent of each career stage (excluding Other) choosing each feeling.',
+    fn: (responses) => {
+      const careers = ['HDR student', 'Postdoc / early-career researcher', 'Mid-career researcher', 'Senior researcher'];
+      const feelings = ['Excited', 'Curious', 'Conflicted', 'Anxious', 'Skeptical', 'Frustrated or angry', 'Neutral'];
+      const out = [];
+      careers.forEach((career) => {
+        const sub = responses.filter((r) => r.career === career);
+        feelings.forEach((feeling) => {
+          const k = sub.filter((r) => (r.feelings || '').split(';').includes(feeling)).length;
+          out.push({ career, feeling, n: k, total: sub.length, pct: sub.length ? Math.round((100 * k) / sub.length) : 0 });
+        });
+      });
+      return out;
+    },
+  });
+
+  dash.calc('mix_by_career', {
+    inputs: ['responses'], title: 'Positive, concerned or both, by career stage', description: 'Each person in a career stage grouped by whether they chose a positive feeling, a concern, both, or neither.',
+    fn: (responses) => {
+      const careers = ['HDR student', 'Postdoc / early-career researcher', 'Mid-career researcher', 'Senior researcher'];
+      const pos = ['Excited', 'Curious'], neg = ['Conflicted', 'Anxious', 'Skeptical', 'Frustrated or angry'];
+      const groups = ['Positive only', 'Both positive and concerned', 'Concerned only', 'Neither (neutral or write-in only)'];
+      const out = [];
+      careers.forEach((career) => {
+        const sub = responses.filter((r) => r.career === career), count = [0, 0, 0, 0];
+        sub.forEach((r) => {
+          const f = (r.feelings || '').split(';'), p = f.some((x) => pos.includes(x)), c = f.some((x) => neg.includes(x));
+          count[p && c ? 1 : p ? 0 : c ? 2 : 3] += 1;
+        });
+        groups.forEach((group, i) => out.push({ career, group, order: i, n: count[i], total: sub.length, pct: sub.length ? Math.round((100 * count[i]) / sub.length) : 0 }));
+      });
+      return out;
+    },
+  });
+
+  dash.calc('senior_vs_rest', {
+    inputs: ['responses'], title: 'Senior researchers vs everyone else', description: "Percent of senior researchers and of HDR, early- and mid-career researchers on six measures, with a two-sided Fisher's exact test for each.",
+    fn: (responses) => {
+      const neg = ['Conflicted', 'Anxious', 'Skeptical', 'Frustrated or angry'];
+      const f = (r) => (r.feelings || '').split(';');
+      const measures = [
+        ['excited', 'Excited', (r) => f(r).includes('Excited')],
+        ['concern', 'Any concern', (r) => f(r).some((x) => neg.includes(x))],
+        ['conflicted', 'Conflicted', (r) => f(r).includes('Conflicted')],
+        ['big', 'Expect substantial or huge change', (r) => Number(r.outlook_order) >= 3],
+        ['routine', 'Use routinely', (r) => Number(r.use_order) >= 4],
+        ['deep', 'Deeply integrated', (r) => Number(r.use_order) === 5],
+      ];
+      const sen = responses.filter((r) => r.career === 'Senior researcher');
+      const oth = responses.filter((r) => ['HDR student', 'Postdoc / early-career researcher', 'Mid-career researcher'].includes(r.career));
+      const lf = [0]; for (let i = 1; i <= responses.length; i++) lf[i] = lf[i - 1] + Math.log(i);
+      const fisher = (a, b, c, d) => {
+        const r1 = a + b, r2 = c + d, c1 = a + c, N = r1 + r2;
+        const pr = (x) => Math.exp(lf[r1] + lf[r2] + lf[c1] + lf[N - c1] - lf[N] - lf[x] - lf[r1 - x] - lf[c1 - x] - lf[r2 - c1 + x]);
+        const p0 = pr(a); let p = 0;
+        for (let x = Math.max(0, c1 - r2); x <= Math.min(r1, c1); x++) { const q = pr(x); if (q <= p0 * (1 + 1e-7)) p += q; }
+        return Math.min(1, p);
+      };
+      return measures.map(([measure, label, test]) => {
+        const a = sen.filter(test).length, c = oth.filter(test).length;
+        return { measure, label, senior_n: sen.length, others_n: oth.length,
+          senior_pct: Math.round((100 * a) / sen.length), others_pct: Math.round((100 * c) / oth.length),
+          p: Number(fisher(a, sen.length - a, c, oth.length - c).toFixed(3)) };
+      });
+    },
+  });
+
+  dash.calc('schools', {
+    inputs: ['schools_raw'], title: 'Respondents by School', description: 'Respondents from each School or unit.',
+    fn: (rows) => {
+      const n = d3.sum(rows, (r) => r.n);
+      return rows.map((r) => ({ label: r.label, n: r.n, total: n, pct: Math.round((100 * r.n) / n) })).sort((a, b) => b.n - a.n);
+    },
+  });
+
+  dash.calc('careers', {
+    inputs: ['responses'], title: 'Respondents by career stage', description: 'Respondents at each career stage.',
+    fn: (responses) => {
+      const order = ['HDR student', 'Postdoc / early-career researcher', 'Mid-career researcher', 'Senior researcher', 'Other'], n = responses.length;
+      return order.map((label) => { const k = responses.filter((r) => r.career === label).length; return { label, n: k, total: n, pct: Math.round((100 * k) / n) }; }).filter((r) => r.n);
+    },
+  });
+}</script>
+
+<script>{
+  const SV = window.SV;
+  const fmtDate = d3.utcFormat('%-d %b');
+
+  dash.draw('cell', (el) => {
+    const d = dash.data(el.dataset.source);
+    if (d.status !== 'ok') { el.textContent = '—'; return; }
+    const [k, v] = el.dataset.where.split('=');
+    const row = d.data.find((r) => String(r[k]) === v);
+    const val = row ? row[el.dataset.field] : null;
+    el.textContent = val == null ? '—' : /^\d{4}-\d{2}-\d{2}$/.test(String(val)) ? fmtDate(new Date(val)) : String(val);
+  });
+
+  dash.draw('writeins', (el) => {
+    const d = dash.data('writeins');
+    if (d.status !== 'ok') { el.textContent = '—'; return; }
+    const w = d.data.map((r) => r.text).filter(Boolean);
+    el.textContent = w.length ? w.map((s) => `“${s}”`).join(', ') : 'none';
+  });
+
+  dash.draw('stackbars', (el) => {
+    const d = SV.state(el, el.dataset.source);
+    if (!d) return;
+    SV.stack(el, d.data);
+  });
+
+  dash.draw('bars', (el) => {
+    const d = SV.state(el, el.dataset.source);
+    if (!d) return;
+    SV.hbar(el, d.data);
+  });
+
+  dash.draw('themes', (el) => {
+    const d = SV.state(el, el.dataset.source);
+    if (!d) return;
+    const kind = el.dataset.kind;
+    if (!SV.pick[kind] || !d.data.some((r) => r.label === SV.pick[kind])) SV.pick[kind] = d.data[0] && d.data[0].label;
+    SV.hbar(el, d.data, {
+      selected: SV.pick[kind],
+      onClick: (r) => { SV.pick[kind] = r.label; dash.draw('themes'); dash.draw('quotes'); },
+    });
+  });
+
+  dash.draw('quotes', (el) => {
+    const d = dash.data('segments');
+    if (d.status !== 'ok') { el.textContent = '—'; return; }
+    const kind = el.dataset.kind, t = dash.data(kind === 'p' ? 'p_themes' : 'u_themes');
+    if (!SV.pick[kind] && t.status === 'ok' && t.data[0]) SV.pick[kind] = t.data[0].label;
+    const theme = SV.pick[kind];
+    const hits = d.data.filter((r) => r.kind === kind && (r.themes || '').split(';').includes(theme));
+    const byPerson = d3.groups(hits, (r) => r.id);
+    const head = document.createElement('p'); head.className = 'sv-qhead';
+    head.textContent = theme ? `${SV.lab(theme)}: ${byPerson.length} ${byPerson.length === 1 ? 'person' : 'people'}, ${hits.length} excerpt${hits.length === 1 ? '' : 's'}` : 'Pick a theme';
+    const items = byPerson.map(([, rs]) => {
+      const q = document.createElement('div'); q.className = 'sv-q';
+      rs.sort((a, b) => Number(a.seg) - Number(b.seg)).forEach((r) => { const p = document.createElement('p'); p.textContent = r.text; q.append(p); });
+      const r = rs[0], m = document.createElement('span'); m.className = 'm'; m.textContent = SV.lab(r.career);
+      q.append(m); return q;
+    });
+    el.replaceChildren(head, ...items);
+    el.scrollTop = 0;
+  });
+
+  dash.draw('careertable', (tb) => {
+    const d = dash.data('career_measures');
+    if (d.status !== 'ok') { tb.replaceChildren(); return; }
+    const cols = ['hdr', 'ecr', 'mid', 'senior'];
+    tb.replaceChildren(...d.data.map((r) => {
+      const tr = document.createElement('tr'); tr.dataset.key = r.measure;
+      if (r.p < 0.05) tr.style.fontWeight = '600';
+      const k = document.createElement('td'); k.textContent = SV.lab(r.measure);
+      const q = document.createElement('td'); q.textContent = r.question; q.style.color = 'var(--color-fg-muted)';
+      tr.append(k, q);
+      cols.forEach((c) => {
+        const td = document.createElement('td'); td.className = 'num'; td.textContent = `${r[c]}%`;
+        const bar = document.createElement('span'); bar.className = 'sv-cellbar'; bar.style.width = `${Math.round(r[c] * 0.5)}px`;
+        td.append(bar); tr.append(td);
+      });
+      const rg = document.createElement('td'); rg.textContent = String(r.range);
+      const pv = document.createElement('td'); pv.textContent = r.p.toFixed(3);
+      tr.append(rg, pv);
+      return tr;
+    }));
+  });
+
+  dash.draw('feelgrid', (el) => {
+    const d = SV.state(el, 'feelings_by_career');
+    if (!d) return;
+    el.querySelectorAll('svg').forEach((s) => s.remove());
+    const careers = [...new Set(d.data.map((r) => r.career))], feelings = [...new Set(d.data.map((r) => r.feeling))];
+    const short = { 'HDR student': 'HDR', 'Postdoc / early-career researcher': 'Postdoc / ECR', 'Mid-career researcher': 'Mid-career', 'Senior researcher': 'Senior' };
+    const W = Math.max(300, el.clientWidth || 360), labW = Math.min(170, W * 0.36), headH = 40, rowH = 30;
+    const H = headH + feelings.length * rowH;
+    const x = d3.scaleBand(careers, [labW, W]).paddingInner(0.06), y = d3.scaleBand(feelings, [headH, H]).paddingInner(0.08);
+    const svg = d3.select(el).insert('svg', ':first-child').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img');
+    const tip = SV.tip(el);
+    careers.forEach((c) => {
+      const tot = d.data.find((r) => r.career === c).total;
+      svg.append('text').attr('x', x(c) + x.bandwidth() / 2).attr('y', 15).attr('font-size', 12).attr('text-anchor', 'middle').text(`${SV.emoji[c]} ${short[c] || c}`).call(SV.fit, x.bandwidth() - 2);
+      svg.append('text').attr('class', 'mut').attr('x', x(c) + x.bandwidth() / 2).attr('y', 31).attr('font-size', 11).attr('text-anchor', 'middle').text(`n=${tot}`);
+    });
+    feelings.forEach((fl) => svg.append('text').attr('x', 0).attr('y', y(fl) + y.bandwidth() / 2 + 4).attr('font-size', 13).text(SV.lab(fl)).call(SV.fit, labW - 8));
+    d.data.forEach((r) => {
+      svg.append('rect').attr('x', x(r.career)).attr('y', y(r.feeling)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 3)
+        .style('fill', dash.colors[0]).style('opacity', 0.06 + 0.84 * (r.pct / 100))
+        .on('mousemove', (ev) => tip.show(ev, `${SV.lab(r.career)}`, `${SV.lab(r.feeling)}: ${r.n} of ${r.total} (${r.pct}%)`)).on('mouseleave', () => tip.hide());
+      svg.append('text').attr('x', x(r.career) + x.bandwidth() / 2).attr('y', y(r.feeling) + y.bandwidth() / 2 + 4).attr('font-size', 12)
+        .attr('text-anchor', 'middle').attr('font-weight', r.pct >= 50 ? 600 : null).style('pointer-events', 'none').style('font-variant-numeric', 'tabular-nums').text(`${r.pct}%`);
+    });
+  });
+
+  dash.draw('mixstage', (el) => {
+    const d = SV.state(el, 'mix_by_career');
+    if (!d) return;
+    el.querySelectorAll('svg').forEach((s) => s.remove());
+    const careers = [...new Set(d.data.map((r) => r.career))];
+    const W = Math.max(260, el.clientWidth || 360), rowH = 44, H = careers.length * rowH;
+    const x = d3.scaleLinear([0, 100], [0, W]);
+    const fill = [dash.colors[0], dash.colors[2], dash.colors[1], 'var(--cds-chart-muted)'];
+    const svg = d3.select(el).insert('svg', ':first-child').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img');
+    const tip = SV.tip(el);
+    careers.forEach((c, i) => {
+      const segs = d.data.filter((r) => r.career === c).sort((a, b) => a.order - b.order);
+      const g = svg.append('g').attr('transform', `translate(0,${i * rowH})`);
+      g.append('text').attr('y', 13).attr('font-size', 13).text(`${SV.lab(c)} · n=${segs[0].total}`).call(SV.fit, W - 2);
+      let acc = 0;
+      segs.forEach((s) => {
+        const share = s.total ? (100 * s.n) / s.total : 0, x0 = acc; acc += share;
+        if (!s.n) return;
+        g.append('rect').attr('x', x(x0)).attr('y', 18).attr('width', Math.max(1, x(share) - 1)).attr('height', 20).style('fill', fill[s.order])
+          .on('mousemove', (ev) => tip.show(ev, SV.lab(c), `${SV.lab(s.group)}: ${s.n} of ${s.total} (${s.pct}%)`)).on('mouseleave', () => tip.hide());
+        if (x(share) > 34) g.append('text').attr('x', x(x0) + 5).attr('y', 32).attr('font-size', 11).style('pointer-events', 'none').style('font-variant-numeric', 'tabular-nums').text(`${s.pct}%`);
+      });
+    });
+  });
+
+  dash.draw('dumbbell', (el) => {
+    const d = SV.state(el, 'senior_vs_rest');
+    if (!d) return;
+    el.querySelectorAll('svg').forEach((s) => s.remove());
+    const rows = d.data, W = Math.max(260, el.clientWidth || 360), rowH = 46, H = rows.length * rowH + 18;
+    const probe = d3.select(el).append('svg').append('text').attr('font-size', 12).text('p = 0.000');
+    const pw = probe.node().getComputedTextLength() + 12; probe.node().ownerSVGElement.remove();
+    const x = d3.scaleLinear([0, 100], [16, W - pw - 18]);
+    const svg = d3.select(el).insert('svg', ':first-child').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img');
+    const tip = SV.tip(el);
+    [0, 25, 50, 75, 100].forEach((t) => {
+      svg.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', 0).attr('y2', H - 16).style('stroke', 'var(--cds-chart-grid)');
+      svg.append('text').attr('class', 'mut').attr('x', x(t)).attr('y', H - 3).attr('font-size', 11).attr('text-anchor', 'middle').text(`${t}%`);
+    });
+    rows.forEach((r, i) => {
+      const g = svg.append('g').attr('transform', `translate(0,${i * rowH})`);
+      g.append('text').attr('y', 13).attr('font-size', 13).text(SV.lab(r.label)).call(SV.fit, W - pw - 8);
+      const y = 30, sig = r.p < 0.05;
+      g.append('line').attr('x1', x(Math.min(r.senior_pct, r.others_pct))).attr('x2', x(Math.max(r.senior_pct, r.others_pct))).attr('y1', y).attr('y2', y)
+        .style('stroke', 'var(--cds-chart-axis)').style('stroke-width', 2);
+      [['others_pct', dash.colors[0], 'HDR, early- and mid-career', 'others_n'], ['senior_pct', dash.colors[1], 'Senior researchers', 'senior_n']].forEach(([k, col, name, nk]) => {
+        g.append('circle').attr('cx', x(r[k])).attr('cy', y).attr('r', 6).style('fill', col)
+          .on('mousemove', (ev) => tip.show(ev, SV.lab(r.label), `${name}: ${r[k]}% of ${r[nk]}`)).on('mouseleave', () => tip.hide());
+      });
+      g.append('text').attr('x', W - pw + 4).attr('y', y + 4).attr('font-size', 12).attr('class', sig ? null : 'mut')
+        .attr('font-weight', sig ? 600 : null).style('font-variant-numeric', 'tabular-nums').text(`p = ${r.p.toFixed(3)}`);
+    });
+  });
+
+  dash.draw('career', (el) => {
+    const d = SV.state(el, 'use_by_career');
+    if (!d) return;
+    el.querySelectorAll('svg').forEach((s) => s.remove());
+    const careers = [...new Set(d.data.map((r) => r.career))].filter((c) => d.data.find((r) => r.career === c).total > 0);
+    const W = Math.max(260, el.clientWidth || 360), rowH = 44, H = careers.length * rowH;
+    const x = d3.scaleLinear([0, 100], [0, W]);
+    const fill = { 1: 'var(--cds-chart-muted)', 2: 'var(--cds-chart-muted)', 3: dash.colors[0], 4: dash.colors[0], 5: dash.colors[0] };
+    const op = { 1: 1, 2: 0.45, 3: 0.35, 4: 0.65, 5: 1 };
+    const svg = d3.select(el).insert('svg', ':first-child').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img');
+    const tip = SV.tip(el);
+    careers.forEach((c, i) => {
+      const segs = d.data.filter((r) => r.career === c);
+      const g = svg.append('g').attr('transform', `translate(0,${i * rowH})`);
+      g.append('text').attr('y', 13).attr('font-size', 13).text(`${SV.lab(c)} · n=${segs[0].total}`).call(SV.fit, W - 2);
+      let acc = 0;
+      segs.forEach((s) => {
+        const share = (100 * s.n) / s.total, x0 = acc; acc += share;
+        if (!s.n) return;
+        g.append('rect').attr('x', x(x0)).attr('y', 18).attr('width', Math.max(1, x(share) - 1)).attr('height', 20)
+          .style('fill', fill[s.order]).style('opacity', op[s.order])
+          .on('mousemove', (ev) => tip.show(ev, SV.lab(c), `${SV.lab(s.use)}: ${s.n} of ${s.total} (${s.pct}%)`)).on('mouseleave', () => tip.hide());
+        if (x(share) > 34) g.append('text').attr('x', x(x0) + 5).attr('y', 32).attr('font-size', 11).style('pointer-events', 'none').style('font-variant-numeric', 'tabular-nums').text(`${s.pct}%`);
+      });
+    });
+  });
+
+  dash.draw('excite', (el) => {
+    const d = SV.state(el, 'excite_by_use');
+    if (!d) return;
+    el.querySelectorAll('svg').forEach((s) => s.remove());
+    const rows = d.data, W = Math.max(260, el.clientWidth || 360), rowH = 52, H = rows.length * rowH;
+    const x = d3.scaleLinear([0, 100], [0, W - 44]);
+    const svg = d3.select(el).insert('svg', ':first-child').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img');
+    const tip = SV.tip(el);
+    rows.forEach((r, i) => {
+      const g = svg.append('g').attr('transform', `translate(0,${i * rowH})`);
+      g.append('text').attr('y', 13).attr('font-size', 13).text(`${SV.lab(r.use)} · n=${r.n}`).call(SV.fit, W - 2);
+      [['excited', 0, 'Excited'], ['concerned', 1, 'Concerned']].forEach(([k, ci, name], j) => {
+        const y = 18 + j * 14, w = Math.max(2, x(r[k + '_pct']));
+        g.append('rect').attr('y', y).attr('height', 11).attr('rx', 2).attr('width', w).style('fill', dash.colors[ci])
+          .on('mousemove', (ev) => tip.show(ev, SV.lab(r.use), `${name}: ${r[k]} of ${r.n} (${r[k + '_pct']}%)`)).on('mouseleave', () => tip.hide());
+        g.append('text').attr('class', 'mut').attr('x', w + 6).attr('y', y + 10).attr('font-size', 11).style('font-variant-numeric', 'tabular-nums').text(`${r[k + '_pct']}%`);
+      });
+    });
+  });
+}</script>
+
+
+<script>
+  fetch('data/meta.json').then((r) => r.json()).then((m) => { SV.meta = m; }).then(() => dash.load({
+    responses: 'data/responses.csv', segments: 'data/segments.csv', schools_raw: 'data/schools.csv', writeins: 'data/writeins.csv',
+  }));
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => ['stackbars', 'bars', 'themes', 'career', 'excite', 'feelgrid', 'mixstage', 'dumbbell'].forEach((n) => dash.draw(n)), 200); });
+</script>
+</body>
+</html>

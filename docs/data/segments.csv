@@ -1,0 +1,160 @@
+id,kind,seg,text,themes,career
+p1,p,0,I am concerned about the impact of Sri and agentic ai being uncontrolled,Ethics and responsible use,Senior researcher
+p1,u,0,Editing and literature review. Some research seeking to use ai in practce.,Writing and editing;Literature search and synthesis,Senior researcher
+p2,p,0,Hard to keep up with it.,Keeping up and wanting to learn,Senior researcher
+p2,p,1,"Too many people claim they are experts, when they are not.",Keeping up and wanting to learn,Senior researcher
+p2,u,0,"Coding and recoding for optimisation (Codex, Claude).",Coding and software,Senior researcher
+p2,u,1,"Advice for solver optimisation (Codex, Claude).",Data analysis and modelling,Senior researcher
+p2,u,2,"Synthesis of literature, (Consensus).",Literature search and synthesis,Senior researcher
+p2,u,3,Production of [short] podcast[s] summarising the content of a teaching module (Notebooklm).,Teaching and learning,Senior researcher
+p2,u,4,"Writing more clearly (gemma4:26b available through Open Ollama).
+I am using local AI when I can (Open Ollama).",Writing and editing,Senior researcher
+p2,u,5,[Excerpt withheld: it could identify the respondent],Figures and plotting,Senior researcher
+p3,p,0,Balancing time to learn/experiment yet not enough time to get the actual work done. How do you get over that initial time deficit when youre already in the red!,Keeping up and wanting to learn,Mid-career researcher
+p4,p,0,"For researchers, LLM-assisted coding is likely to be a net positive as it allows for fast prototyping; less time will be spent focusing on monotonous coding, allowing for more time to be spent on doing real science, for example, designing experiments, interpreting results and drawing conclusions.",Productivity and new capabilities,HDR student
+p4,p,1,"One of the biggest issues that is likely to become increasingly widespread is the outsourcing of critical thinking; researchers will need to be intentional with which aspects of their workflow can be automated with generative AI, and which they should conduct themselves.","Training, critical thinking and deskilling",HDR student
+p4,u,0,Generative AI is being used to quickly search the literature and find papers that would have traditionally been quite difficult to uncover without extensive keyword optimisation,Literature search and synthesis,HDR student
+p4,u,1,"it is also being used to clean up and debug existing code, code documentation and commenting.",Coding and software,HDR student
+p4,u,2,It is also quite useful for plotting and has drastically reduced the amount of time spent tweaking plots and reading API documentation in order to obtain the desired styling.,Figures and plotting,HDR student
+p5,p,0,"Confused by conflicting press & other reports.
+Willing to learn.",Keeping up and wanting to learn,Senior researcher
+p5,u,0,Checking computer codes,Coding and software,Senior researcher
+p5,u,1,Extending literature search,Literature search and synthesis,Senior researcher
+p6,p,0,"Generative AI is predominantly provided by foreign corporations, and the over-reliance on AI for research damages our sovereign capability.","Corporate control, openness and data",Senior researcher
+p7,p,0,"I wish we could automatize also research labs where AI executes tasks, fabrication and perform setup building and testing (this would augment the productivity exponentially decreasing the need for large funds), although I realize how concerning and disruptive this is.",Productivity and new capabilities,Senior researcher
+p7,u,0,Mainly polishing grant proposals and papers,Writing and editing,Senior researcher
+p7,u,1,sometimes to discuss new ideas about new projects,Ideas and thinking partner,Senior researcher
+p7,u,2,sometimes as and advanced Google to find answer to established Physics problems and definitions.,Literature search and synthesis,Senior researcher
+p8,p,0,"I feel a lot of sadness and grief about how science was. I also feel sad because none of us had any choice in this, it's been thrust upon us. Change is necessary and is always hard and I understand that, but it doesn't change how sad I feel.",Grief and loss of the joy of research,Postdoc / early-career researcher
+p8,p,1,"I'm also concerned because I've noticed that PhD and honours students don't seem to know the purpose of what they're doing. I've seen talks given by students where they're doing all this stuff, but they can't answer or can't answer well when asked why they're doing it or why their research/method/technique should be used/is interesting.","Training, critical thinking and deskilling",Postdoc / early-career researcher
+p9,p,0,It can save a lot of time. It can help with brainstorming ideas.,Productivity and new capabilities,Mid-career researcher
+p9,p,1,I worry that this will erode my own capabilities and skills I take pride in.,"Training, critical thinking and deskilling",Mid-career researcher
+p9,p,2,The reward and benefit of efficiency could and should be more time to think and be creative. But there is a risk that the space is filled by more noise.,"Productivity and new capabilities;Research quality, peer review and integrity",Mid-career researcher
+p9,u,0,Generating starting points to flesh out.,Ideas and thinking partner,Mid-career researcher
+p10,p,0,"I think AI will be embedded in our work more and more in the future, leading to structural changes in the way we do reseach. I think we need to learn how to use this tool ethically and to build common practices that scientists globally agree on",Ethics and responsible use,HDR student
+p10,p,1,"I am concerned about AI replacing people working in academia, from the postdoc position onwards. PhDs are students, so superivsors feel they contribute to their development of critical thinking and training to become researchers. I am worried that this ""ethical"" perspective related to training could end with PhDs and that there will be less motivation for hiring postodocs, considered workers and no more people to be trained.","Careers and the researcher's role;Training, critical thinking and deskilling",HDR student
+p10,p,2,"I am concerned about the role of researchers in the future. Given the potential of this tool, will we become just people checking/reviewing AI outcomes or will we maintain our role of critical thinkers?",Careers and the researcher's role,HDR student
+p10,u,0,"For delving into the literature, finding papers and gaps in research",Literature search and synthesis,HDR student
+p11,p,0,Would like to know more about various ways of useful genAI practices and worlflows to optimise mine.,Keeping up and wanting to learn,HDR student
+p12,p,0,"Solid works are supposed to be driven by intrinsic motives. Doing science is always about understanding and communicating. Therefore, we should only accept surgical edits from AI due to human's understanding bottleneck.","Training, critical thinking and deskilling",HDR student
+p12,u,0,"AI has now been integrated in every system I am using: literature management, notes-taking, and coding.","Literature search and synthesis;Coding and software;Workflow, admin and project tracking",HDR student
+p13,p,0,"It is difficult to know what is really going on, there is a lot of marketing and deception involved in how AI companies communicate and operate in general.","Corporate control, openness and data",Senior researcher
+p14,p,0,"I'm concerned about relying on proprietary, closed-source, black-box software. The University approach to partner with OpenAI enhances this risk.","Corporate control, openness and data",Senior researcher
+p14,u,0,review and summarize literature.,Literature search and synthesis,Senior researcher
+p14,u,1,review own manuscript to improve text and mathematical derivations.,Writing and editing;Maths and theory,Senior researcher
+p14,u,2,"code, including full implementation of models presented in papers.",Coding and software;Data analysis and modelling,Senior researcher
+p14,u,3,"keep track of projects, workflows, and simulation outcomes.","Workflow, admin and project tracking",Senior researcher
+p14,u,4,investigate the potential of generative AI to create more efficient computational methods.,Data analysis and modelling,Senior researcher
+p15,p,0,Fantastic productivity boost,Productivity and new capabilities,Senior researcher
+p15,p,1,"but I'm concerned about errors and general lack of reproducibility , especially with using proprietary models.","Research quality, peer review and integrity;Corporate control, openness and data",Senior researcher
+p15,p,2,"Also, journals will be flooded with low-quality AI research, already are in some areas, and fraud will also increase due to ease of committing fraud / inventing data with AI","Research quality, peer review and integrity",Senior researcher
+p15,u,0,programming experiments,Coding and software,Senior researcher
+p15,u,1,doing data analysis,Data analysis and modelling,Senior researcher
+p15,u,2,editing and even drafting parts of manuscripts,Writing and editing,Senior researcher
+p16,p,0,"The energy use and climate impacts are significant, and given [the topic of our research], it has complex interplay between our own workflow and the trends we observe.",Environmental cost,Postdoc / early-career researcher
+p17,p,0,"I'm happily using it for literature seearching, looking fro ideas and streamlining tedious workflows",Productivity and new capabilities,Senior researcher
+p17,p,1,"but rigorously crosschecking the results. It's mainly a way to generate ideas, and crosscheck my own conclusions",Outputs need expert checking,Senior researcher
+p17,u,0,"Searching for documents, without having to identify precise keywords",Literature search and synthesis,Senior researcher
+p17,u,1,"analysing research results to see if it comes up with suggestions/conclusions I haven't thought of (not usually the case, but can be useful)",Data analysis and modelling;Ideas and thinking partner,Senior researcher
+p17,u,2,"tedious workflows, e.g. extracting particular data from a large dataset and transforming them (even as simple as just reformatting a large pdf file!).","Workflow, admin and project tracking",Senior researcher
+p18,u,0,"Analysis, trouble-shooting",Data analysis and modelling,Senior researcher
+p18,u,1,teaching me new things,Teaching and learning,Senior researcher
+p18,u,2,doing some admin for me,"Workflow, admin and project tracking",Senior researcher
+p19,p,0,[Excerpt withheld: it could identify the respondent],Ethics and responsible use,Postdoc / early-career researcher
+p20,p,0,Impact of HDR training and future careers.,"Training, critical thinking and deskilling;Careers and the researcher's role",Senior researcher
+p20,p,1,Imact on publications and scientific integrity.,"Research quality, peer review and integrity",Senior researcher
+p20,u,0,"I've just published [a] paper where the analysis was done using GenAI. Not my main research focus, but a good test case. Now I'm working out how to deploy more centrally in my research program.",Data analysis and modelling,Senior researcher
+p21,p,0,Advanced/experienced researchers have much to benefit from AI,Productivity and new capabilities,Senior researcher
+p21,p,1,"I am concerned that early researchers (hons/HDR students) will miss the opportunity for deep learning of the research process and core theories in their area, and that integration and scientific creativity will be weakened","Training, critical thinking and deskilling",Senior researcher
+p21,u,0,Coding of psychological experimental tasks,Coding and software,Senior researcher
+p21,u,1,coding of statistical analyses,Coding and software;Data analysis and modelling,Senior researcher
+p21,u,2,written text improvements,Writing and editing,Senior researcher
+p22,p,0,"It changes so much from merely thinking through ideas, reviewing the state of the art, right through to improving the scientific process.",Productivity and new capabilities,Other
+p22,u,0,"Writing code, finding bugs",Coding and software,Other
+p22,u,1,writing presentations,Writing and editing,Other
+p22,u,2,reviewing the literature.,Literature search and synthesis,Other
+p23,p,0,excited about potential applications,Productivity and new capabilities,Postdoc / early-career researcher
+p23,p,1,anxious about the role of academic researchers against privately funded AI corporations (esp. in theoretical fields),"Corporate control, openness and data;Careers and the researcher's role",Postdoc / early-career researcher
+p23,p,2,"conflicted: appreciate that it frees time for broader scientific thinking, worried that it will become easy to lose track of important details in methods","Productivity and new capabilities;Research quality, peer review and integrity",Postdoc / early-career researcher
+p23,p,3,concerned about use of ai for reviewing/interpreting scientific work and funding applications,"Research quality, peer review and integrity",Postdoc / early-career researcher
+p23,u,0,Coding and debugging,Coding and software,Postdoc / early-career researcher
+p23,u,1,Prototyping tests,Coding and software,Postdoc / early-career researcher
+p23,u,2,Submitting/monitoring HPC jobs,"Workflow, admin and project tracking",Postdoc / early-career researcher
+p23,u,3,"Software housekeeping (docs, versioning, dependency management)",Coding and software,Postdoc / early-career researcher
+p23,u,4,Literature search,Literature search and synthesis,Postdoc / early-career researcher
+p23,u,5,Proofreading,Writing and editing,Postdoc / early-career researcher
+p24,p,0,It's here. We have to learn how to use it to do good - vs having AI slop take us all the way down.,"Research quality, peer review and integrity",Other
+p24,u,0,[Excerpt withheld: it could identify the respondent],Teaching and learning,Other
+p24,u,1,[Excerpt withheld: it could identify the respondent],Coding and software;Data analysis and modelling,Other
+p25,p,0,"We have the absolute joy of working on something we love and the privilege to spend our lives learning, it's offensive for all the people who didn't manage to stay in academia to want to use AI and take away so much of the learning process",Grief and loss of the joy of research,Postdoc / early-career researcher
+p25,p,1,(Unless you mean AI trained models to help see which animals are on camera traps etc. but I worry this is all about saving time on the good things about our job),Grief and loss of the joy of research,Postdoc / early-career researcher
+p26,p,0,"I think there need to be big shifts in the way we think about research outputs, it is very easy now to produce low quality outputs that no one has time to read. I think there will be a higher premium on theoretical research that has a direct impact on experiment and technology, on pedagogical presentations, and a significant increase in the size of a minimum publishable unit in terms of theoretical research.","Research quality, peer review and integrity",Senior researcher
+p26,p,1,"Structurally I think this likely breaks the link between HDR training in physics and research outputs in physics. Since senior researchers could be very productive of the kind of work HDR students produce using AI tools, without the need necessarily to engage in supervision, at least in theoretical work. This means we need to ask ourselves harder questions about when and why we train HDRs in the sciences, and urgently answer questions about how to go about training in the sciences. There are many fields, for example all the medical professions, where this kind of thing obtains. Even very high level trainees cannot produce useful outputs until they have completed the training. However it does suggest that the incentives and benchmarks for hiring and promotions need to change too, since in the past this has been so closely tied to research outputs in the form of papers.","Training, critical thinking and deskilling;Careers and the researcher's role",Senior researcher
+p26,u,0,Code writing,Coding and software,Senior researcher
+p26,u,1,figure and diagram,Figures and plotting,Senior researcher
+p26,u,2,complex analytical calculations (I do physics theory),Maths and theory,Senior researcher
+p27,u,0,improve writing,Writing and editing,Senior researcher
+p27,u,1,check literature,Literature search and synthesis,Senior researcher
+p27,u,2,draw graph,Figures and plotting,Senior researcher
+p27,u,3,write program,Coding and software,Senior researcher
+p27,u,4,give suggestions.,Ideas and thinking partner,Senior researcher
+p28,p,0,data escaping to train bots,"Corporate control, openness and data",Senior researcher
+p28,u,0,simplify data analysis [...],Data analysis and modelling,Senior researcher
+p28,u,1,[Excerpt withheld: it could identify the respondent],"Workflow, admin and project tracking",Senior researcher
+p29,p,0,Generative AI will be a permanent fixture in our lives. It's important not to forget how to teach fundamental concepts to students. This is important for helping them generate prompts for AI,"Training, critical thinking and deskilling",Postdoc / early-career researcher
+p29,u,0,I typically use generative AI to help with grammar and typos.,Writing and editing,Postdoc / early-career researcher
+p29,u,1,I have also used it for generating some research ideas or pathways that I may not have thought of,Ideas and thinking partner,Postdoc / early-career researcher
+p30,p,0,"Many [researchers in my field] have expressed, better than I can, their serious concerns about generative AI in research. See, for example, [a recent declaration endorsed by thousands of researchers worldwide].","Research quality, peer review and integrity",Senior researcher
+p31,p,0,"Concerns are mainly about how to ensure a proper use, e.g. throwing in ideas and concepts but letting AI to put them together as cohesive text; how to use it to improving editing when editorials ask not to use it etc. It's confusing, although I understand there is no a simple/single answer.",Ethics and responsible use,Senior researcher
+p31,p,1,"Perspective/thought: science will always be evidence-based, but the way we obtain evidence will change. it not just GenAI, but the combination of sensors derived data, digital twins, etc., all automatically collated and processed by GenAI, that will allow many (or all?) of the unknown or uncontrolled factors, previously going into the 'experimental error' to now be known and quantified.",Productivity and new capabilities,Senior researcher
+p31,p,2,How will this change the role traditional replication in [my field]? We replicate experiments to be able to estimate EE and therefore make inferences about the true effect of treatment/s. But what happens when everything imaginable can be measured and accounted for? How will this change the role of replication in [my field]?,Productivity and new capabilities,Senior researcher
+p31,p,3,"Going a step further, in [my field] we use [controlled research sites] because there are too many moving parts and uncontrolled factors acting and interacting in [real-world settings], therefore making impossible to assess true effect of treatments. But how could/will this change when everything imaginable [in the system] can be continuously monitored and analyzed? Again, it is not just GenAI but all together, with GenAI making the data integration, analysis and reporting in real time, possible.",Productivity and new capabilities,Senior researcher
+p31,u,0,"ATM largely as a tool to assist with meetings, minutes","Workflow, admin and project tracking",Senior researcher
+p31,u,1,"report drafting, editing etc",Writing and editing,Senior researcher
+p31,u,2,as well as to help with lit review search etc.,Literature search and synthesis,Senior researcher
+p31,u,3,PhD students and staff working directly with R or Phyton use AI for coding purposes,Coding and software,Senior researcher
+p31,u,4,"model checking, data exploration etc.",Data analysis and modelling,Senior researcher
+p32,p,0,Many of us are not trained to handle AI (e.g. information science) and cannot evaluate the risks. Courses helps improve the reliability of using AI.,Keeping up and wanting to learn,Postdoc / early-career researcher
+p32,u,0,Able to use complex script to run instrument without any computer language knowledge,Coding and software,Postdoc / early-career researcher
+p33,p,0,I struggle to see a future where genAI does not become dramatically better than us at everything we can do.,Careers and the researcher's role,HDR student
+p33,u,0,"Sometimes I useit as a thinking partner - I find I can get thoughts out much more fluidly if I am speaking (and using an AI model for dictation, e.g. built into Claude, or Wispr Flow, etc), and then the AI model collects my thoughts, reminds me where I was going, and can correct me or nudge me on the next things to try if I appear stuck. This certainly helps me with procrastination at least -rather than just  staring at a blank page I am forced to maintain an active connection with the line of thought by speaking! But troublesomely it can lead to AI giving too much of a hint on how to progress rather than thinking through things myself - although I tryto make my dictations as long and selfthought as possible - when it might suggest what to do that I otherwise would likely have bene able to work out.",Ideas and thinking partner,HDR student
+p34,p,0,Gen AI can be useful for those people who actually know something and are able to critically evaluate its outputs.,Outputs need expert checking,Senior researcher
+p34,p,1,"The overwhelming fear is that far too high a fraction of users will trust the output without checking it, have too little actual knowledge to critically evaluate the outputs.","Outputs need expert checking;Training, critical thinking and deskilling",Senior researcher
+p34,p,2,The end point will be people who know almost nothing and who are hooked on environmentally destructive Gen AI outputs.,"Training, critical thinking and deskilling;Environmental cost",Senior researcher
+p34,u,0,Help with python coding and with a mathematics problem. I found its coding usually wrong (80%) and a good idea but a serious error 35% of the time.,Coding and software;Maths and theory,Senior researcher
+p35,p,0,"While AI is used very constructively by several of my colleagues, notably for coding/modelling, I am concerned about the quality of student research, peer-review, and published paper.","Research quality, peer review and integrity",Senior researcher
+p35,p,1,"In my own work with students, I already see complete gibberish coming through, spat out by AI and taken as gospel by undergraduate or postgraduate student that lack relevant subject matter expertise. At least many of them have still grown up without AI and have some critical thinking skills, but that won't last.","Training, critical thinking and deskilling",Senior researcher
+p35,p,2,"I think generative AI will flood and subsume journals, grant applications, the peer review process, and the quality of and trust in science.","Research quality, peer review and integrity",Senior researcher
+p35,p,3,"I'm also very concerned about its environmental footprint. The University has a sustainability strategy but everything we do under that strategy may be for naught if we all use AI routinely, with all the data centre water and energy use that requires.",Environmental cost,Senior researcher
+p35,p,4,"One the one hand I feel like a luddite, or the Amish in the USA who refuse to use electricity. On the other hand, I am seriously concerned about what genAI might do to science.","Research quality, peer review and integrity",Senior researcher
+p36,p,0,"It is already making available to anyone, integrated cross-disciplinary knowledge and incredibly fast coding ability. This means that our capabilities as individual researchers is vastly and rapidly increasing, depending on how theoretical the work is.",Productivity and new capabilities,Senior researcher
+p36,p,1,"Nevertheless, we still have to be smart enough to ask the right questions both in terms of the science but also methodology because AI still seems to depend so much on human inspiration on both counts (from my experience using both Claude and Codex over the last 6 months -  see below).",Outputs need expert checking,Senior researcher
+p36,p,2,"A remaining challenge is gaining a third, external party perspective and validation on joint researcher-AI work since such work extends beyond the human researcher's expertise and AIs cannot be co-authors.","Research quality, peer review and integrity",Senior researcher
+p36,p,3,Of course there are concerns regarding using AI as a crutch for students - and this is serious.,"Training, critical thinking and deskilling",Senior researcher
+p36,p,4,"But for a senior researcher who already has a breadth of knowledge, skills and perspective, the new capabilities are a real breakthrough.",Productivity and new capabilities,Senior researcher
+p36,p,5,"The challenge is for us to train students to gain that same breadth of knowledge, skill and perspective when AI can seemingly provide it on demand....","Training, critical thinking and deskilling",Senior researcher
+p36,u,0,[Excerpt withheld: it could identify the respondent],Data analysis and modelling,Senior researcher
+p37,p,0,"[Given my field,] concerned about environmental impacts",Environmental cost,Senior researcher
+p37,p,1,but also about being left behind,Keeping up and wanting to learn,Senior researcher
+p38,p,0,[Excerpt withheld: it could identify the respondent],Not relevant to my field,Senior researcher
+p38,u,0,[Excerpt withheld: it could identify the respondent],Not used in my field,Senior researcher
+p39,u,0,writing code,Coding and software,Postdoc / early-career researcher
+p40,p,0,"I use claude for coding on a daily basis. It enables me to pursue several complex projects at once, something that was difficult to do before without students or postdocs",Productivity and new capabilities;Careers and the researcher's role,Senior researcher
+p40,u,0,[Excerpt withheld: it could identify the respondent],Data analysis and modelling,Senior researcher
+p40,u,1,[Excerpt withheld: it could identify the respondent],Data analysis and modelling,Senior researcher
+p40,u,2,[Excerpt withheld: it could identify the respondent],Data analysis and modelling,Senior researcher
+p40,u,3,[Excerpt withheld: it could identify the respondent],Data analysis and modelling,Senior researcher
+p40,u,4,[Excerpt withheld: it could identify the respondent],Data analysis and modelling,Senior researcher
+p40,u,5,[Excerpt withheld: it could identify the respondent],Data analysis and modelling;Coding and software,Senior researcher
+p41,p,0,"I think it will accelerate research, in some areas more than others.",Productivity and new capabilities,Mid-career researcher
+p41,p,1,"But it will likely also lead to more ""research slop"" and possibly reduced creativity in research.","Research quality, peer review and integrity",Mid-career researcher
+p41,u,0,Coding,Coding and software,Mid-career researcher
+p41,u,1,manuscript revising,Writing and editing,Mid-career researcher
+p41,u,2,literature search.,Literature search and synthesis,Mid-career researcher
+p42,p,0,It feels very risky that we’re outsourcing so much of the intellectual work we do to private companies,"Corporate control, openness and data",Postdoc / early-career researcher
+p42,u,0,Troubleshooting code,Coding and software,Postdoc / early-career researcher
+p43,p,0,"Just want to learn more. In this case, hear about other people's experiences (and other people with a science bend).",Keeping up and wanting to learn,Mid-career researcher
+p44,p,0,lay people overestimate its abilities.,Outputs need expert checking,Postdoc / early-career researcher
+p44,p,1,"in my field it has generated a surplus of submissions to peer review journals (on first glance a paper sounds interesting, but if read properly many problems and inconsistencies surface). reviewer request are increasing and I hear that AI is being used for reviews - this is troublesome. I think the pressure / competition to publish is increasing, peer review is suffering.","Research quality, peer review and integrity",Postdoc / early-career researcher
+p44,u,0,"I use it for simple troubleshooting when running analysis in R or coding with Python, although more complicated stuff still has to be solved the old fashion way and real knowledge about content is needed to guide through the process.",Coding and software,Postdoc / early-career researcher
+p44,u,1,"Where I really like it, is when i have a draft of a manuscript and am not quite happy with how it reads. I can give that to genAI and ask for a couple of suggestions. Or asking it to shorten a paragraph. This works really well, although of course sometimes it misinterprets little bits.",Writing and editing,Postdoc / early-career researcher
