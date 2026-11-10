@@ -327,7 +327,7 @@
     "Careers and the researcher's role": '💼', 'Corporate control, openness and data': '🏢', 'Outputs need expert checking': '✅',
     'Keeping up and wanting to learn': '📚', 'Environmental cost': '🌍', 'Ethics and responsible use': '🧭', 'Grief and loss of the joy of research': '💔',
     'Not relevant to my field': '🚷',
-    'Any concern': '😟', 'Left a perspective comment': '💬', 'Gave a use example': '🧰', 'Expect substantial or huge change': '🌪️', 'Use routinely': '🛠️',
+    'Any concern': '😟', 'Left a perspective comment': '💬', 'Gave a use example': '🧰', 'Expect substantial or huge change': '🌪️', 'Embedded or deeply integrated': '🛠️',
     'Coding and software': '💻', 'Literature search and synthesis': '🔎', 'Writing and editing': '✍️', 'Data analysis and modelling': '📊',
     'Workflow, admin and project tracking': '🗂️', 'Ideas and thinking partner': '💡', 'Maths and theory': '📐', 'Figures and plotting': '📈',
     'Teaching and learning': '🧑‍🏫', 'Not used in my field': '🚷',
@@ -588,7 +588,7 @@
       [1, 2, 3, 4].forEach((o) => tests.push([label('outlook_order', o), 'Outlook', (r) => Number(r.outlook_order) === o]));
       tests.push(['Expect substantial or huge change', 'Outlook', (r) => Number(r.outlook_order) >= 3]);
       [1, 2, 3, 4, 5].forEach((o) => tests.push([label('use_order', o), 'Use', (r) => Number(r.use_order) === o]));
-      tests.push(['Use routinely', 'Use', (r) => Number(r.use_order) >= 4]);
+      tests.push(['Embedded or deeply integrated', 'Use', (r) => Number(r.use_order) >= 4]);
       tests.push(['Left a perspective comment', 'Comment', (r) => !!r.perspective_text]);
       tests.push(['Gave a use example', 'Comment', (r) => !!r.use_text]);
       // Chi-square survival function for 3 degrees of freedom, with an erfc approximation (Abramowitz and Stegun 7.1.26).
@@ -660,7 +660,7 @@
         ['concern', 'Any concern', (r) => f(r).some((x) => neg.includes(x))],
         ['conflicted', 'Conflicted', (r) => f(r).includes('Conflicted')],
         ['big', 'Expect substantial or huge change', (r) => Number(r.outlook_order) >= 3],
-        ['routine', 'Use routinely', (r) => Number(r.use_order) >= 4],
+        ['routine', 'Embedded or deeply integrated', (r) => Number(r.use_order) >= 4],
         ['deep', 'Deeply integrated', (r) => Number(r.use_order) === 5],
       ];
       const sen = responses.filter((r) => r.career === 'Senior researcher');
