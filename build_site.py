@@ -120,11 +120,10 @@ sub('<p class="sv-note">Write-ins: <span data-draw="writeins" data-source="respo
 sub('<p class="sv-eyebrow">Talk 1 · Opening</p>', '<p class="sv-eyebrow">Part I</p>')
 sub('<p class="sv-eyebrow">Talk 2 · Session 2 opener</p>', '<p class="sv-eyebrow">Part II</p>')
 sub('<p class="sv-eyebrow">Cross-cut · Career stage</p>', '<p class="sv-eyebrow">Across career stages</p>')
-sub('<p class="sv-eyebrow">Context</p>', '<p class="sv-eyebrow">Context</p>')
 sub("With 8 to 27 people per stage", "With 8 to 31 people per stage")
 sub('The one "Other" respondent is left out.', 'The two "Other" respondents are left out.')
 sub('<h1 class="sv-title">Generative AI in research: Faculty of Science survey</h1>',
-    '<p class="sv-kicker">Faculty of Science, The University of Sydney</p>\n    <h1 class="sv-title">Generative AI in Scientific Research</h1>\n'
+    '<h1 class="sv-title">Generative AI in Scientific Research</h1>\n'
     '    <p class="sv-sub">Survey of researchers, for the event on Thursday 12 November 2026</p>')
 sub("""Small groups (one person from a School, for example) could be identifiable from their comment, so take care before putting quotes on slides.</p>""",
     """For this public version, each quote shows only the respondent's career stage. Excerpts that could identify someone (a named unit, a thesis topic, a distinctive research program) are withheld, and a few others are lightly edited in [square brackets] to blur the field. Respondent-level data is published without IDs, Schools, timestamps or free text, in shuffled order.</p>""")
@@ -139,12 +138,12 @@ def rings_svg(w, h, cx, cy, n, r0, dr, seed):
             rr = base * (1 + .035 * math.sin(3 * t + ph[0] + i * .15) + .02 * math.sin(5 * t + ph[1]) + .015 * math.sin(2 * t + ph[2] + i * .3))
             pts.append(f"{cx + rr * math.cos(t):.1f},{cy + rr * math.sin(t):.1f}")
         f = i / (n - 1)
-        col = "#b07a1e" if is_open else "#%02x%02x%02x" % tuple(round(a + (b - a) * f) for a, b in zip((0xe8, 0xd2, 0x9e), (0xc0, 0x86, 0x5c)))
+        col = "#d0901f" if is_open else "#%02x%02x%02x" % tuple(round(a + (b - a) * f) for a, b in zip((0xee, 0xd8, 0x9f), (0xd4, 0x8a, 0x58)))
         out.append(f'<polyline points="{" ".join(pts)}" fill="none" stroke="{col}" stroke-width="{2.4 if is_open else 1.3}" stroke-linecap="round"/>')
     return f'<svg class="sv-rings" viewBox="0 0 {w} {h}" aria-hidden="true">{"".join(out)}</svg>'
 
 RINGS = rings_svg(420, 420, 300, 120, 11, 14, 22, 11)
-COLORS = ["#b07a1e", "#3d3a6b", "#a24a26", "#5e4237"]  # ochre, indigo, red clay, umber
+COLORS = ["#d0901f", "#5450a8", "#c75a2e", "#7d5236"]  # ochre, indigo, red clay, umber (brighter screen palette)
 THEME = """
 <style>
   :root {
@@ -163,16 +162,16 @@ THEME = """
   .sv { position: relative; }
   .sv-head { position: relative; padding-top: 12px; padding-right: min(34vw, 300px); min-height: 200px; }
   .sv-rings { position: absolute; top: -40px; right: -20px; width: min(42vw, 380px); height: auto; z-index: -1; }
-  .sv-kicker { margin: 0; font-family: var(--font-anthropic-serif); font-style: italic; color: #b07a1e; font-size: 19px; }
-  .sv-sub { margin: 0; color: #3d3a6b; font-weight: 600; }
-  .sv-eyebrow { font-family: var(--font-anthropic-serif) !important; font-style: italic; text-transform: none !important; letter-spacing: 0 !important; color: #b07a1e !important; font-size: 18px !important; }
-  #perspectives .sv-h2 { color: #8a3324; } #use .sv-h2 { color: #8f6420; } #career-stage .sv-h2, #respondents .sv-h2 { color: #3d3a6b; }
+  .sv-kicker { margin: 0; font-family: var(--font-anthropic-serif); font-style: italic; color: #d0901f; font-size: 19px; }
+  .sv-sub { margin: 0; color: #5450a8; font-weight: 600; }
+  .sv-eyebrow { font-family: var(--font-anthropic-serif) !important; font-style: italic; text-transform: none !important; letter-spacing: 0 !important; color: #d0901f !important; font-size: 18px !important; }
+  #perspectives .sv-h2 { color: #b0442a; } #use .sv-h2 { color: #b07d1c; } #career-stage .sv-h2, #respondents .sv-h2 { color: #4f4ba0; }
   .sv-h2 { font-family: var(--font-anthropic-serif); font-weight: 400 !important; font-size: 30px !important; }
   .sv-card h3 { font-family: var(--font-anthropic-serif); font-weight: 400 !important; font-size: 22px !important; }
-  .sv-card, .sv-tile { border: 1.5px dotted #d4bd8e !important; }
-  #perspectives .sv-card { border-color: #c48f80 !important; } #use .sv-card { border-color: #c9a86c !important; } #career-stage .sv-card { border-color: #a19dc4 !important; }
-  .sv-tile .v { color: #8a3324; } .sv-tile:nth-child(2) .v { color: #8f6420; } .sv-tile:nth-child(3) .v { color: #3d3a6b; } .sv-tile:nth-child(4) .v { color: #a24a26; }
-  .sv-q { border-left-color: #d4bd8e !important; }
+  .sv-card, .sv-tile { border: 1.5px dotted #e6cf9f !important; }
+  #perspectives .sv-card { border-color: #e2ad9c !important; } #use .sv-card { border-color: #e6c47f !important; } #career-stage .sv-card { border-color: #bdb9e8 !important; }
+  .sv-tile .v { color: #b0442a; } .sv-tile:nth-child(2) .v { color: #b07d1c; } .sv-tile:nth-child(3) .v { color: #4f4ba0; } .sv-tile:nth-child(4) .v { color: #c75a2e; }
+  .sv-q { border-left-color: #e6cf9f !important; }
   .dash-skeleton { min-height: 160px; background: linear-gradient(90deg, #f6f1e8, #fbf8f2, #f6f1e8); border-radius: 8px; }
   .sv-foot { color: var(--color-fg-muted); font-size: 14px; margin: 0; }
   @media (max-width: 640px) { .sv-head { padding-right: 0; } .sv-rings { opacity: .45; } :root { --cds-font-size-title: 32px; } }
@@ -219,8 +218,9 @@ START = """
   }));
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => ['stackbars', 'bars', 'themes', 'career', 'excite', 'feelgrid', 'mixstage', 'dumbbell'].forEach((n) => dash.draw(n)), 200); });
 </script>"""
-sub("window.SV = window.SV || { pick: { p: null, u: null } };", "window.SV = window.SV || { pick: { p: null, u: null }, meta: {} };")
-sub('<header class="sv-head" id="top">', f'<header class="sv-head" id="top">\n    {RINGS}')
+sub("window.SV = window.SV || { pick: { p: null, u: null } };", "window.SV = window.SV || { pick: { p: null, u: null }, meta: {} };", count=2)
+# the dashboard page already carries the rings and the kicker line (survey/dashboard/restyle.py)
+assert 'class="sv-rings"' in src and 'class="sv-kicker"' in src
 sub('</section>\n</div>', '</section>\n  <p class="sv-foot">Organized by A/Prof Ben Fulcher, School of Physics. Survey analysis and page built with Claude.</p>\n</div>')
 
 # the dashboard runtime gave each page script its own scope; plain scripts share one, so wrap each in a block
