@@ -77,6 +77,13 @@ pub["use_text"] = (resp["use_text"].str.strip() != "").astype(int)
 pub.sample(frac=1, random_state=7).to_csv(OUT / "data" / "responses.csv", index=False)
 
 resp["school"].value_counts().rename_axis("label").reset_index(name="n").to_csv(OUT / "data" / "schools.csv", index=False)
+# expected change by School, as counts only; Schools with fewer than 5 respondents are pooled so no row is one person
+sizes = resp["school"].value_counts()
+grp = resp["school"].where(resp["school"].map(sizes) >= 5, "Other Schools")
+oc = pd.crosstab(grp, resp["outlook_order"]).reindex(columns=[1, 2, 3, 4], fill_value=0)
+oc = oc.loc[oc.sum(axis=1).sort_values(ascending=False).index]
+oc = oc.loc[[i for i in oc.index if i != "Other Schools"] + (["Other Schools"] if "Other Schools" in oc.index else [])]
+oc.stack().rename("n").reset_index().rename(columns={"outlook_order": "order", "school": "school"}).to_csv(OUT / "data" / "outlook_school.csv", index=False)
 w = [s for v in resp["feelings_other"] if v for s in v.split("; ")]; rng.shuffle(w)
 w = [re.sub(r"my research as a[n]? anthropologist.*$", "my research [in my field]", s) for s in w]  # names a field that is near-unique here
 assert not any("anthropolog" in s or "geograph" in s for s in w)
@@ -115,6 +122,26 @@ sub("""    const d = dash.data('responses');
 sub("m.textContent = [r.school, r.career, r.use].map(SV.lab).join('  ·  ');", "m.textContent = SV.lab(r.career);")
 sub('<p class="sv-note">Write-ins: <span data-draw="writeins" data-source="responses">—</span></p>',
     '<p class="sv-note">Write-ins: <span data-draw="writeins" data-source="writeins">—</span></p>')
+
+sub("""    inputs: ['responses'], title: 'Expected change by School', description: 'For each School or unit, the share of its respondents expecting each level of change in their research area over the next 2–3 years.',
+    fn: (responses) => {
+      const out = [];
+      d3.groups(responses, (r) => r.school).sort((a, b) => b[1].length - a[1].length).forEach(([school, sub]) => {
+        [1, 2, 3, 4].forEach((order) => {
+          const k = sub.filter((r) => Number(r.outlook_order) === order).length;
+          out.push({ school, order, n: k, total: sub.length, pct: Math.round((100 * k) / sub.length) });
+        });
+      });
+      return out;""", """    inputs: ['outlook_school_raw'], title: 'Expected change by School', description: 'For each School or unit (those with fewer than 5 respondents pooled), the share of its respondents expecting each level of change.',
+    fn: (rows) => {
+      const out = [];
+      d3.groups(rows, (r) => r.school).forEach(([school, rs]) => {
+        const total = d3.sum(rs, (r) => r.n);
+        rs.forEach((r) => out.push({ school, order: r.order, n: r.n, total, pct: Math.round((100 * r.n) / total) }));
+      });
+      return out;""")
+sub("Several Schools have only a handful of respondents, so read their bars as anecdotes, not estimates.",
+    "Schools with fewer than five respondents are pooled as Other Schools, and several others are small, so read their bars as anecdotes, not estimates.")
 
 # wording for a public audience (no talk slots), and stale counts
 sub('<p class="sv-eyebrow">Talk 1 · Opening</p>', '<p class="sv-eyebrow">Part I</p>')
@@ -214,9 +241,9 @@ RUNTIME = f"""
 START = """
 <script>
   fetch('data/meta.json').then((r) => r.json()).then((m) => { SV.meta = m; }).then(() => dash.load({
-    responses: 'data/responses.csv', segments: 'data/segments.csv', schools_raw: 'data/schools.csv', writeins: 'data/writeins.csv',
+    responses: 'data/responses.csv', segments: 'data/segments.csv', schools_raw: 'data/schools.csv', writeins: 'data/writeins.csv', outlook_school_raw: 'data/outlook_school.csv',
   }));
-  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => ['stackbars', 'bars', 'themes', 'career', 'excite', 'feelgrid', 'mixstage', 'dumbbell'].forEach((n) => dash.draw(n)), 200); });
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => ['stackbars', 'bars', 'themes', 'career', 'excite', 'feelgrid', 'mixstage', 'dumbbell', 'outlookschool'].forEach((n) => dash.draw(n)), 200); });
 </script>"""
 sub("window.SV = window.SV || { pick: { p: null, u: null } };", "window.SV = window.SV || { pick: { p: null, u: null }, meta: {} };", count=2)
 # the dashboard page already carries the rings and the kicker line (survey/dashboard/restyle.py)
